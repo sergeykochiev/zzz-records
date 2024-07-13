@@ -1,113 +1,191 @@
-import Image from "next/image";
+"use client"
 
-export default function Home() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+import { ReactNode, useEffect, useRef, useState } from "react"
+
+type Pull = {
+    uid: string,
+    gacha_id: string,
+    gacha_type: string,
+    item_id: string,
+    count: string,
+    time: string
+    name: string,
+    lang: string,
+    item_type: string,
+    rank_type: string,
+    id: string
+    region: string,
+    region_time_zone: string
+}
+type Pulls = Record<gachatypes, Pull[]> 
+const params = {
+    "authkey_ver": 1,
+    "sign_type": 2,
+    "plat_type": 3,
+    "lang": "en",
+    "region": "prod_gf_eu",
+    "game_biz": "nap_global",
+    "size": 20,
+    "real_gacha_type": 0,
+    "authkey": "",
+    "end_id": 0
+}
+enum gachatypes {
+    standart = 1,
+    event = 2,
+    weapon = 3,
+    bangboo = 5
+}
+const gachatypeslist: gachatypes[] = [1, 2, 3, 5] as const
+const zzzapiurl = "https://public-operation-nap-sg.hoyoverse.com/common/gacha_record/api/getGachaLog"
+
+function customUrlSearchParams(params: Record<string, any>) {
+    let searchParams = ""
+    for (let key of Object.keys(params)) {
+        if (searchParams.length != 0) searchParams = searchParams + "&"
+        searchParams = searchParams + `${key}=${params[key]}`
+    }
+    return searchParams
+}
+
+function getUrl(params: Record<string, any>) {
+    return `${zzzapiurl}?${customUrlSearchParams(params)}`
+}
+
+async function fetchBanner(params: Record<string, any>, pulls: Pull[] = []): Promise<Pull[] | void> {
+    const url = getUrl(params)
+    console.log(url)
+    const res = await fetch(url)
+    if (!res.ok) {
+        console.log(`fetch error ${res.status}: ${res.statusText}`)
+        return
+    }
+    const json = await res.json()
+    console.log(json)
+    if (json.retcode != 0) {
+        console.log(`retcode error ${json.retcode}: ${json.message}`)
+        return
+    }
+    if (json.data.list.length == 0) {
+        params.end_id = 0
+        return pulls
+    }
+    const newPulls = pulls.concat(json.data.list)
+    console.log(newPulls)
+    params.end_id = newPulls[newPulls.length - 1].id
+    console.log(params.end_id)
+    await new Promise(e => setTimeout(e, 300));
+    return await fetchBanner(params, newPulls)
+}
+
+async function fetchPulls(authkey: string) {
+    params.authkey = authkey
+    const pulls: Pulls = {
+        1: [],
+        2: [],
+        3: [],
+        5: []
+    }
+    for (let gachatype of gachatypeslist) {
+        console.log(`Fetching from banner ${gachatype}`)
+        params.real_gacha_type = Number(gachatype)
+        const gachatypePulls = await fetchBanner(params)
+        if (!gachatypePulls) {
+            console.log("error occured while fetching pulls")
+            return
+        }
+        console.log(`Fetched ${gachatypePulls.length} pulls from banner ${gachatype}`)
+        pulls[gachatype] = gachatypePulls
+    }
+    return pulls
+}
+
+function PullComponent({ pull }: { pull: Pull }) {
+    return <div className={`hover:scale-[1.01] transition-all ${pull.rank_type == "2" && "bg-slate-200"} ${pull.rank_type == "3" && "bg-purple-200"} ${pull.rank_type == "4" && "bg-orange-200"} shadow grid grid-cols-[2fr,1fr,1fr] whitespace-nowrap w-full py-[8px] px-[16px] rounded-[20px] place-items-center gap-[8px]`}>
+        <div className="place-self-start font-bold">{pull.name}</div>
+        <div>{pull.item_type}</div>
+        <div className="place-self-end">{pull.item_id}</div>
+    </div>
+}
+function PullsList({ pulls }: { pulls: Pull[] }) {
+    return <div className="flex flex-col w-full gap-[8px] text-black">
+        {pulls.map(pull => <PullComponent key={pull.id} pull={pull}/>)}
+    </div>
+}
+function PullListHeading({ children }: { children: ReactNode }) {
+    return <div className="w-full grid place-items-center text-[48px] font-black text-slate-800 drop-shadow-xl">{children}</div>
+}
+function NoDataPlaceholder() {
+    return <div className="py-[8px] w-full grid place-items-center">No data</div>
+}
+export default function Page() {
+    const [trigger, setTrigger] = useState<boolean>(false)
+    const [input, setInput] = useState<string>("")
+    const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true)
+    const [pulls, setPulls] = useState<Pulls>()
+    const buttonRef = useRef<HTMLButtonElement | null>(null)
+    const button = buttonRef.current
+    useEffect(() => {
+        if (isInitialLoad) {
+            setIsInitialLoad(false)
+            return
+        }
+        async function fetchData() {
+            const pulls = await fetchPulls(input)
+            setPulls(pulls)
+        }
+        fetchData()
+    }, [trigger])
+    function buttonMouseDownAnimation() {
+        button?.animate([
+                {
+                    transform: "scale(1)"
+                },
+                {
+                    transform: "scale(0.95)"
+                }
+            ],
+            {
+                duration: 100
+            }
+        )
+    }
+    function buttonMouseUpAnimation() {
+        button?.animate([
+                {
+                    transform: "scale(0.95)"
+                },
+                {
+                    transform: "scale(1)"
+                }
+            ],
+            {
+                duration: 100
+            }
+        )
+    }
+    return <main className="px-[128px] pb-[128px] flex flex-col gap-[64px] items-center bg-gray-100 min-h-screen">
+        <div className="py-[20px] w-full grid place-items-center text-slate-700 text-[24px] font-black uppercase">ZZZ Records</div>
+        <div className="text-black w-full rounded-[20px] bg-white outline outline-[1px] outline-slate-500 p-[32px] shadow-xl flex flex-col gap-[20px]">
+            <h1 className="text-[20px] text-slate-800 px-[24px] font-black">Fetch pulls</h1>
+            <div className="flex gap-[16px] items-stretch">
+                <input value={input} onChange={e => setInput(e.target.value)} placeholder="Enter your authkey" className="w-full shadow-sm min-w-0 focus:bg-[#ffd129] focus:placeholder:font-bold focus:placeholder:text-black focus:text-black focus:font-bold rounded-full py-[8px] focus:outline-slate-700 focus:border-white outline outline-[3px] outline-transparent border-transparent transition-all border-[2px] border-solid px-[24px] bg-slate-700 text-white placeholder:text-gray-300" name="authkey"/>
+                <button onMouseDown={buttonMouseDownAnimation} onMouseUp={buttonMouseUpAnimation} ref={buttonRef} onClick={() => setTrigger(!trigger)} className="px-[24px] py-[8px] hover:outline-slate-700 hover:border-white active:scale-[0.95] outline outline-[3px] outline-transparent border-transparent border-[2px] border-solid min-w-[200px] hover:bg-[#ffd129] hover:font-black hover:text-black text-[14px] shadow-sm text-white font-medium transition-all bg-slate-700 rounded-full">Fetch</button>
+            </div>
         </div>
-      </div>
-
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+        <div className="flex flex-col gap-[16px] w-full font-medium text-slate-700">
+            <div className="grid grid-cols-4 w-full gap-[64px]">
+                <PullListHeading>Standart</PullListHeading>
+                <PullListHeading>Event</PullListHeading>
+                <PullListHeading>Weapon</PullListHeading>
+                <PullListHeading>Bangboo</PullListHeading>
+            </div>
+            <div className="grid grid-cols-4 w-full gap-[64px] place-items-start">
+                {pulls && pulls[1].length ? <PullsList pulls={pulls[1]}/> : <NoDataPlaceholder/>}
+                {pulls && pulls[2].length ? <PullsList pulls={pulls[2]}/> : <NoDataPlaceholder/>}
+                {pulls && pulls[3].length ? <PullsList pulls={pulls[3]}/> : <NoDataPlaceholder/>}
+                {pulls && pulls[5].length ? <PullsList pulls={pulls[5]}/> : <NoDataPlaceholder/>}
+            </div>
+        </div>
     </main>
-  );
 }

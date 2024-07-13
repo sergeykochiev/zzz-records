@@ -1,0 +1,75 @@
+data2:
+
+ссылка апи для получения истории
+https://public-operation-nap-sg.hoyoverse.com/common/gacha_record/api/getGachaLog
+параметры:
+    "authkey_ver": 1,
+    "sign_type": 2,
+    "auth_appid": "",
+    "win_mode": "",
+    "gacha_id": "",
+    "timestamp": "",
+    "init_log_gacha_type": "",
+    "init_log_gacha_base_type": "",
+    "ui_layout": "",
+    "button_mode": "default",
+    "plat_type": 3,
+    "authkey": "",
+    "lang": "en",
+    "region": "prod_gf_eu",
+    "game_biz": "nap_global",
+    "page": "",
+    "size": "",
+    "gacha_type": "",
+    "real_gacha_type": "",
+    "end_id": ""
+gachatype хз чем может быть, он ни на что не влияет, влияет realgachatype. типы гач:
+    "standart": 1,
+    "event": 2,
+    "weapon": 3,
+    "bangboo": 5
+
+ссылка на графический интерфейс истории, параметры те же что и у апи
+https://gs.hoyoverse.com/nap/event/e20230424gacha/index.html
+
+data1:
+
+ссылки по которой можно получить инфу о предметах на баннерах, по айди баннера и джсну с названием локализации. в параметрах таймстемп
+https://operation-webstatic.hoyoverse.com/gacha_info/nap/prod_gf_eu/2c1f5692fdfbb733a08733f9eb69d32aed1d37/ru-ru.json?ts=1719887753
+https://operation-webstatic.hoyoverse.com/gacha_info/nap/prod_gf_eu/40a0441f75c73deef8b958d37ce56679d91cef/ru-ru.json?ts=1719565558
+https://operation-webstatic.hoyoverse.com/gacha_info/nap/prod_gf_eu/2c1f5692fdfbb733a08733f9eb69d32aed1d37/ru-ru.json?ts=1719887753
+https://operation-webstatic.hoyoverse.com/gacha_info/nap/prod_gf_eu/ac32d8ed4032a973fd7c48a94ccd9ed065293f/ru-ru.json?ts=1719565751
+https://operation-webstatic.hoyoverse.com/gacha_info/nap/prod_gf_eu/0d26e09e673eca3fc2d464c3605ec511873add/ru-ru.json?ts=1719887768
+https://operation-webstatic.hoyoverse.com/gacha_info/nap/prod_gf_eu/2c1f5692fdfbb733a08733f9eb69d32aed1d37/ru-ru.json?ts=1720620373
+https://operation-webstatic.hoyoverse.com/gacha_info/nap/prod_gf_eu/0d26e09e673eca3fc2d464c3605ec511873add/ru-ru.json?ts=1720620384
+https://operation-webstatic.hoyoverse.com/gacha_info/nap/prod_gf_eu/40a0441f75c73deef8b958d37ce56679d91cef/ru-ru.json?ts=1720620395
+https://operation-webstatic.hoyoverse.com/gacha_info/nap/prod_gf_eu/ac32d8ed4032a973fd7c48a94ccd9ed065293f/ru-ru.json?ts=1720620404
+источник data1
+
+без понятия что это
+https://sdk.hoyoverse.com/sw.html?gameBiz=nap_global&network=wifi&platform=pc&lang=ru&bundle_id=nap_global&runtime_cache=false&mode=fullscreen&game=nap&region=prod_gf_eu&level=0&channel_id=1
+при заходе ответ такой ServiceWorker registration successful with scope: https://sdk.hoyoverse.com/nap/ вероятно что то системное
+по этому домену также куча системных файлов типа css стилей и всяких js файлов (скорее всего либы)
+
+куча ссылок всевозможных статических данных локализация например вот
+https://webstatic.hoyoverse.com/admin/mi18n/plat_oversea/m12311645481601/m12311645481601-vi-vn.json
+
+какая то ссылка на marketing agreement
+https://nap-sdk-os.hoyoverse.com/nap_global/mdk/agreement/api/getAgreementInfos?token=UtEOJTy6vPdI8rRj6wNLURcXVnluMqdQ&uid=64047805&biz_key=nap_global&from_user_center=true&country_code=RU
+
+ссылки на api обьявлений типо такой
+https://sg-announcement-static.hoyoverse.com/common/nap_global/announcement/api/getAnnContent?game=nap&game_biz=nap_global&lang=ru&bundle_id=nap_global&platform=pc&region=prod_gf_eu&t=1720101653_4852dfb4491793066577cf9b9a939525_d41d8cd98f00b204e9800998ecf8427e&level=11&channel_id=1
+
+скорее всего ссылка на задний фон меню обьявлений
+https://gs.hoyoverse.com/nap/event/e20230424gacha/images/bg-2.062abf17.png
+
+data_0:
+
+вообще нет ссылок
+
+data_3:
+
+нет хойо ссылок
+
+
+
