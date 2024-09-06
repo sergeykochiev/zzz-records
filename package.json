@@ -11,6 +11,9 @@
   "dependencies": {
     "@next/swc-win32-x64-msvc": "^14.2.8",
     "next": "14.2.5",
+    "dexie": "^4.0.8",
+    "dexie-react-hooks": "^1.1.7",
+    "next": "14.2.5",
     "react": "^18",
     "react-dom": "^18"
   },

@@ -71,5 +71,9 @@ data_3:
 
 нет хойо ссылок
 
+список баннеров китай сервера геншин импакт
+https://operation-webstatic.mihoyo.com/gacha_info/hk4e/cn_gf01/gacha/list.json
+
+
 
 
