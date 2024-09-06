@@ -8,7 +8,7 @@ import pyperclip
 
 zzzapiurl = 'https://public-operation-nap-sg.hoyoverse.com/common/gacha_record/api/getGachaLog'
 zzzwebviewurl = 'https://gs.hoyoverse.com/nap/event/e20230424gacha/index.html'
-cachefile = PATH.WindowsPath("C:/Program Files/HoYoPlay/games/ZenlessZoneZero Game/ZenlessZoneZero_Data/webCaches/2.23.0.0/Cache/Cache_Data/data_2")
+cachefile = PATH.WindowsPath("F:/Program Files/HoYoPlay/games/ZenlessZoneZero Game/ZenlessZoneZero_Data/webCaches/2.23.0.0/Cache/Cache_Data/data_2")
 gachatypes = {
     "standart": None,
     "event": 2001,
@@ -76,7 +76,7 @@ def test_fetch(link):
     game_biz, authkey = linkparams['game_biz'][0], linkparams['authkey'][0]
     params["authkey"] = authkey
     params["size"] = 1
-    params["real_gacha_type"] = 5
+    params["real_gacha_type"] = realgachatypes["event"]
     params["game_biz"] = game_biz
     emptyparams = []
     for key in params:
