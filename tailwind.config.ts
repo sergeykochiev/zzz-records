@@ -1,5 +1,9 @@
 import type { Config } from "tailwindcss";
-
+export const customColors = {
+  "hwh-zzz-yellow": "#ffd129",
+  "hwh-genshin-green": "#45c78d",
+  "hwh-starrail-blue": "#7227f3"
+}
 const config: Config = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -8,6 +12,7 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      colors: customColors,
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":

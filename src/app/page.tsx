@@ -1,5 +1,7 @@
 "use client"
 
+import GameKinds from "@/components/common/types/GameKinds"
+import Input from "@/components/Input"
 import { ReactNode, useEffect, useRef, useState } from "react"
 
 type Pull = {
@@ -169,7 +171,7 @@ export default function Page() {
         <div className="text-black w-full rounded-[20px] bg-white outline outline-[1px] outline-slate-500 p-[32px] shadow-xl flex flex-col gap-[20px]">
             <h1 className="text-[20px] text-slate-800 px-[24px] font-black">Fetch pulls</h1>
             <div className="flex gap-[16px] items-stretch">
-                <input value={input} onChange={e => setInput(e.target.value)} placeholder="Enter your authkey" className="w-full shadow-sm min-w-0 focus:bg-[#ffd129] focus:placeholder:font-bold focus:placeholder:text-black focus:text-black focus:font-bold rounded-full py-[8px] focus:outline-slate-700 focus:border-white outline outline-[3px] outline-transparent border-transparent transition-all border-[2px] border-solid px-[24px] bg-slate-700 text-white placeholder:text-gray-300" name="authkey"/>
+                <Input kind={GameKinds.GENSHIN} value={input} onChange={e => setInput(e.target.value)} placeholder="Enter your authkey" name="authkey"/>
                 <button onMouseDown={buttonMouseDownAnimation} onMouseUp={buttonMouseUpAnimation} ref={buttonRef} onClick={() => setTrigger(!trigger)} className="px-[24px] py-[8px] hover:outline-slate-700 hover:border-white active:scale-[0.95] outline outline-[3px] outline-transparent border-transparent border-[2px] border-solid min-w-[200px] hover:bg-[#ffd129] hover:font-black hover:text-black text-[14px] shadow-sm text-white font-medium transition-all bg-slate-700 rounded-full">Fetch</button>
             </div>
         </div>
