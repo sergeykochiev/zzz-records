@@ -1,8 +1,8 @@
 import type { Config } from "tailwindcss";
 export const customColors = {
-  "hwh-zzz-yellow": "#ffd129",
+  "hwh-zenless-yellow": "#ffd129",
   "hwh-genshin-green": "#45c78d",
-  "hwh-starrail-blue": "#7227f3"
+  "hwh-starrail-blue": "#5880fd"
 }
 const config: Config = {
   content: [

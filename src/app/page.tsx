@@ -1,35 +1,12 @@
 "use client"
 
-import GameKinds from "@/components/common/types/GameKinds"
+import GameKinds from "@/common/types/Games"
 import Input from "@/components/Input"
 import { ReactNode, useEffect, useRef, useState } from "react"
 import { db, Pull, Stat } from "./db"
 import { useLiveQuery } from "dexie-react-hooks"
-
-interface HoyoPull {
-    uid: string,
-    gacha_id: string
-    gacha_type: "1" | "2" | "3" | "5"
-    item_id: string
-    count: 1
-    time: string
-    name: string
-    lang: string
-    item_type: "Agents" | "W-Engines" | "Bangboo"
-    rank_type: "2" | "3" | "4"
-    id: string
-}
-interface HoyoResponse {
-    message: string,
-    retcode: number,
-    data: {
-        page: number,
-        size: number,
-        list: HoyoPull[],
-        region: string,
-        region_time_zone: number
-    }
-}
+import Button from "@/components/Button"
+import Tab from "@/components/Tab"
 const params = {
     "authkey_ver": 1,
     "sign_type": 2,
@@ -175,30 +152,7 @@ async function fetchPulls(authkey: string) {
     return pulls
 }
 
-function PullComponent({ pull }: { pull: Pull }) {
-    const [opened, setOpened] = useState<boolean>(false)
-    return <div className={`select-none w-full flex flex-col ${opened && "bg-slate-400 shadow"} rounded-[22px] p-[2px]`}>
-        <div onClick={() => setOpened(!opened)} className={`cursor-pointer transition-all ${pull.rank_type == "2" && "bg-slate-200"} ${pull.rank_type == "3" && "bg-purple-200"} ${pull.rank_type == "4" && "bg-orange-200"} grid grid-cols-[2fr,1fr,1fr] whitespace-nowrap py-[8px] px-[16px] rounded-[20px] place-items-center gap-[8px]`}>
-            <div className="place-self-start font-bold">{pull.name}</div>
-            <div>{pull.item_type}</div>
-            <div className="place-self-end">{pull.time}</div>
-        </div>
-        {opened && <div className="grid p-[8px] text-white px-[16px] grid-cols-2 gap-[8px] items-start">
-            item_id
-            <div>{pull.item_id}</div>
-            gacha_type
-            <div>{pull.gacha_type}</div>
-            id
-            <div>{pull.id}</div>
-            pity
-            <div>{pull.pity}</div>
-            rank_type
-            <div>{pull.rank_type}</div>
-            uid
-            <div>{pull.uid}</div>
-        </div>}
-    </div>
-}
+
 function PullsList({ pulls }: { pulls: Pull[] }) {
     return <div className="flex flex-col w-full gap-[4px] text-black">
         {pulls.map(pull => <PullComponent key={pull.id} pull={pull}/>)}
@@ -214,8 +168,6 @@ export default function Page() {
     const [trigger, setTrigger] = useState<boolean>(false)
     const [input, setInput] = useState<string>("")
     const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true)
-    const buttonRef = useRef<HTMLButtonElement | null>(null)
-    const button = buttonRef.current
     const uid = "1500382653"
     const [standartPulls, eventPulls, weaponPulls, bangbooPulls] = [
         useLiveQuery(() => db.pulls.where(["uid","gacha_type"]).equals([uid, String(gachatypes.standart)]).reverse().sortBy("time")),
@@ -233,41 +185,27 @@ export default function Page() {
         }
         fetchData()
     }, [trigger])
-    function buttonMouseDownAnimation() {
-        button?.animate([
-                {
-                    transform: "scale(1)"
-                },
-                {
-                    transform: "scale(0.95)"
-                }
-            ],
-            {
-                duration: 100
-            }
-        )
-    }
-    function buttonMouseUpAnimation() {
-        button?.animate([
-                {
-                    transform: "scale(0.95)"
-                },
-                {
-                    transform: "scale(1)"
-                }
-            ],
-            {
-                duration: 100
-            }
-        )
-    }
+
     return <main className="px-[128px] pb-[128px] flex flex-col gap-[64px] items-center bg-gray-100 min-h-screen">
-        <div className="py-[20px] w-full grid place-items-center text-slate-700 text-[24px] font-black uppercase">ZZZ Records</div>
+        <div className="w-full py-[8px] flex items-center justify-between">
+            <div className="grid place-items-center text-slate-700 text-[24px] font-black uppercase">ZZZ Records</div>
+            <div className="flex items-center gap-[8px]">
+                <Tab name="main-nav" kind={GameKinds.GENSHIN}>
+                    Genshin Impact
+                </Tab>
+                <Tab name="main-nav" kind={GameKinds.STARRAIL}>
+                    Honkai: Star Rail
+                </Tab>
+                <Tab name="main-nav" kind={GameKinds.ZZZ}>
+                    Zenless Zone Zero
+                </Tab>
+            </div>
+        </div>
         <div className="text-black w-full rounded-[20px] bg-white outline outline-[1px] outline-slate-500 p-[32px] shadow-xl flex flex-col gap-[20px]">
             <h1 className="text-[20px] text-slate-800 px-[24px] font-black">Fetch pulls</h1>
             <div className="flex gap-[16px] items-stretch">
                 <Input kind={GameKinds.GENSHIN} value={input} onChange={e => setInput(e.target.value)} placeholder="Enter your authkey" name="authkey"/>
-                <button onMouseDown={buttonMouseDownAnimation} onMouseUp={buttonMouseUpAnimation} ref={buttonRef} onClick={() => setTrigger(!trigger)} className="px-[24px] py-[8px] hover:outline-slate-700 hover:border-white active:scale-[0.95] outline outline-[3px] outline-transparent border-transparent border-[2px] border-solid min-w-[200px] hover:bg-[#ffd129] hover:font-black hover:text-black text-[14px] shadow-sm text-white font-medium transition-all bg-slate-700 rounded-full">Fetch</button>
+                <Button kind={GameKinds.GENSHIN} onMouseDown={buttonMouseDownAnimation} onMouseUp={buttonMouseUpAnimation} ref={buttonRef} onClick={() => setTrigger(!trigger)}>Fetch</Button>
             </div>
         </div>
         <div className="flex flex-col gap-[16px] w-full font-medium text-slate-700">
