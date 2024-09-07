@@ -7,8 +7,16 @@ from urllib.parse import urlparse, urlencode, parse_qs
 import pyperclip
 
 zzzapiurl = 'https://public-operation-nap-sg.hoyoverse.com/common/gacha_record/api/getGachaLog'
+genshinapiurl = "https://public-operation-hk4e-sg.hoyoverse.com/gacha_info/api/getGachaLog"
 zzzwebviewurl = 'https://gs.hoyoverse.com/nap/event/e20230424gacha/index.html'
-cachefile = PATH.WindowsPath("F:/Program Files/HoYoPlay/games/ZenlessZoneZero Game/ZenlessZoneZero_Data/webCaches/2.23.0.0/Cache/Cache_Data/data_2")
+genshinwebviewurl = 'https://gs.hoyoverse.com/genshin/event/e20190909gacha-v3/index.html'
+zzzpath = "C:/Program Files/HoYoPlay/games/ZenlessZoneZero Game/ZenlessZoneZero_Data/webCaches/2.27.0.0/Cache/Cache_Data/data_2"
+genshinpath = "C:/Program Files/HoYoPlay/games/Genshin Impact game/GenshinImpact_Data/webCaches/2.28.0.0/Cache/Cache_Data/data_2"
+
+cachefile = PATH.WindowsPath(genshinpath)
+webviewurl = genshinwebviewurl
+apiurl = genshinapiurl
+
 gachatypes = {
     "standart": None,
     "event": 2001,
@@ -58,7 +66,7 @@ def extract_wishlink_from_str(wishlinkstartindex):
 
 
 def find_all_links():
-    wishlinkindex = cachevalue.find(zzzwebviewurl)
+    wishlinkindex = cachevalue.find(webviewurl)
     if wishlinkindex == -1:
         raise RuntimeError("Link doesn't exist in the cache file! Reopen the wishing tab and try again.")
     links = []
@@ -66,7 +74,7 @@ def find_all_links():
         link = extract_wishlink_from_str(wishlinkindex)
         if (link not in links):
             links.append(link)
-        wishlinkindex = cachevalue.find(zzzwebviewurl, wishlinkindex+1)
+        wishlinkindex = cachevalue.find(webviewurl, wishlinkindex+1)
     print(f"\nFound {len(links)} wishlinks\n")
     return links
 
