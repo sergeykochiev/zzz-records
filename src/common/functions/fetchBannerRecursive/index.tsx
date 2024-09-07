@@ -1,6 +1,6 @@
-import HoyoParams from "@/common/types/Api/Hoyoverse/Params"
+import HoyoParams from "@/common/types/api/Hoyoverse/Params"
 import getUrl from "../getUrl"
-import HoyoResponse from "@/common/dto/Hoyoverse/HoyoResponse"
+import HoyoResponse from "@/common/types/dto/Hoyoverse/HoyoResponse"
 import { PullEntity, StatEntity } from "@/app/db"
 import StringifiedHoyoParams from "@/common/types/StringifiedHoyoParams"
 export default async function fetchBannerRecursive(rootUrl: string, params: StringifiedHoyoParams, pulls: PullEntity[] = [], stats: StatEntity = {

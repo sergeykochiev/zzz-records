@@ -1,4 +1,4 @@
-import HoyoPull from "@/common/dto/Hoyoverse/HoyoPull";
+import HoyoPull from "@/common/types/dto/Hoyoverse/HoyoPull";
 import PullComponent from "../PullComponent";
 import GameUniqueComponentProps from "@/common/types/GameUniqueComponentProps";
 interface PullListProps extends GameUniqueComponentProps {

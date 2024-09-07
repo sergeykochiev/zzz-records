@@ -1,7 +1,7 @@
 import { PullEntity, StatEntity } from "@/app/db"
-import HoyoParams from "@/common/types/Api/Hoyoverse/Params"
+import HoyoParams from "@/common/types/api/Hoyoverse/Params"
 import fetchSingleGachaTypePulls from "../fetchSingleGachaTypePulls"
-import ZenlessGachaType from "@/common/types/Zenless/GachaType"
+import ZenlessGachaType from "@/common/types/dto/Zenless/GachaType"
 import StringifiedHoyoParams from "@/common/types/StringifiedHoyoParams"
 export default async function fetchPulls<TargetGachaType extends ZenlessGachaType>(rootUrl: string, params: StringifiedHoyoParams, gachaTypes: TargetGachaType): Promise<[PullEntity[], StatEntity[]]> {
     let pulls: PullEntity[] = []

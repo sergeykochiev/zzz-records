@@ -13,9 +13,9 @@ genshinwebviewurl = 'https://gs.hoyoverse.com/genshin/event/e20190909gacha-v3/in
 zzzpath = "C:/Program Files/HoYoPlay/games/ZenlessZoneZero Game/ZenlessZoneZero_Data/webCaches/2.27.0.0/Cache/Cache_Data/data_2"
 genshinpath = "C:/Program Files/HoYoPlay/games/Genshin Impact game/GenshinImpact_Data/webCaches/2.28.0.0/Cache/Cache_Data/data_2"
 
-cachefile = PATH.WindowsPath(genshinpath)
-webviewurl = genshinwebviewurl
-apiurl = genshinapiurl
+cachefile = PATH.WindowsPath(zzzpath)
+webviewurl = zzzwebviewurl
+apiurl = zzzapiurl
 
 gachatypes = {
     "standart": None,
@@ -84,7 +84,7 @@ def test_fetch(link):
     game_biz, authkey = linkparams['game_biz'][0], linkparams['authkey'][0]
     params["authkey"] = authkey
     params["size"] = 1
-    params["real_gacha_type"] = realgachatypes["event"]
+    params["real_gacha_type"] = 6
     params["game_biz"] = game_biz
     emptyparams = []
     for key in params:
@@ -103,7 +103,7 @@ def test_fetch(link):
     #     else:
     #         print(i, " :no data")
     #     sleep(0.3)
-    requesturl = '{}?{}'.format(zzzapiurl, urlencode(params))
+    requesturl = '{}?{}'.format(apiurl, urlencode(params))
     print("\n"+requesturl+"\n")
     with urlopen(requesturl) as request:
         result = request.read()

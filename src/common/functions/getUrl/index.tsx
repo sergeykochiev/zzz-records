@@ -1,4 +1,4 @@
-import HoyoParams from "@/common/types/Api/Hoyoverse/Params";
+import HoyoParams from "@/common/types/api/Hoyoverse/Params";
 import stringifyParamsValues from "../stringifyParamsValues";
 import StringifiedHoyoParams from "@/common/types/StringifiedHoyoParams";
 export default function getUrl(rootUrl: string, params: StringifiedHoyoParams) {

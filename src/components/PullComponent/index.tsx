@@ -1,4 +1,4 @@
-import HoyoPull from "@/common/dto/Hoyoverse/HoyoPull"
+import HoyoPull from "@/common/types/dto/Hoyoverse/HoyoPull"
 import GameUniqueComponentProps from "@/common/types/GameUniqueComponentProps"
 import { useState } from "react"
 interface PullComponentProps extends GameUniqueComponentProps {

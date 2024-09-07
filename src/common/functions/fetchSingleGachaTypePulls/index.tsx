@@ -1,4 +1,4 @@
-import HoyoParams from "@/common/types/Api/Hoyoverse/Params";
+import HoyoParams from "@/common/types/api/Hoyoverse/Params";
 import fetchBannerRecursive from "../fetchBannerRecursive";
 import { PullEntity, StatEntity } from "@/app/db";
 import StringifiedHoyoParams from "@/common/types/StringifiedHoyoParams";

@@ -7,10 +7,10 @@ import { useLiveQuery } from "dexie-react-hooks"
 import Button from "@/components/Button"
 import Tab from "@/components/Tab"
 import PullComponent from "@/components/PullComponent"
-import ApiUrls from "@/common/types/Api/Hoyoverse/Urls"
+import ApiUrls from "@/common/types/api/Hoyoverse/getGachaLogRouteApiUrls"
 import { db } from "./db"
-import ZenlessGachaType from "@/common/types/Zenless/GachaType"
 import fetchPulls from "@/common/functions/fetchPulls"
+import ZenlessGachaType from "@/common/types/dto/Zenless/GachaType"
 
 
 
