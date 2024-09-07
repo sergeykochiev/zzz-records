@@ -1,7 +1,8 @@
-import HoyoParams from "@/common/dto/Hoyoverse/HoyoParams";
+import HoyoParams from "@/common/types/Api/Hoyoverse/Params";
 import fetchBannerRecursive from "../fetchBannerRecursive";
 import { PullEntity, StatEntity } from "@/app/db";
-export default async function fetchSingleGachaTypePulls(rootUrl: string, params: HoyoParams): Promise<[PullEntity[], StatEntity] | void> {
+import StringifiedHoyoParams from "@/common/types/StringifiedHoyoParams";
+export default async function fetchSingleGachaTypePulls(rootUrl: string, params: StringifiedHoyoParams): Promise<[PullEntity[], StatEntity] | void> {
     // console.log(`Fetching from banner ${gachatype}`)
     const bannerData = await fetchBannerRecursive(rootUrl, params)
     if (!bannerData) {

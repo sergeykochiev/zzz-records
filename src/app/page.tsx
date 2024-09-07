@@ -3,42 +3,14 @@
 import GameKinds from "@/common/types/Games"
 import Input from "@/components/Input"
 import { ReactNode, useEffect, useRef, useState } from "react"
-import { db, Pull, Stat } from "./db"
 import { useLiveQuery } from "dexie-react-hooks"
 import Button from "@/components/Button"
 import Tab from "@/components/Tab"
 import PullComponent from "@/components/PullComponent"
-const params = {
-    "authkey_ver": 1,
-    "sign_type": 2,
-    "plat_type": 3,
-    "lang": "en",
-    "region": "prod_gf_eu",
-    "game_biz": "nap_global",
-    "size": 20,
-    "real_gacha_type": 0,
-    "authkey": "",
-    "end_id": 0
-}
-enum gachatypes {
-    standart = 1,
-    event = 2,
-    weapon = 3,
-    bangboo = 5
-}
-const eventgachaTypes = [gachatypes.event, gachatypes.weapon]
-const gachatypeslist: gachatypes[] = [1, 2, 3, 5] as const
-const zzzapiurl = "https://public-operation-nap-sg.hoyoverse.com/common/gacha_record/api/getGachaLog"
-
-function customUrlSearchParams(params: Record<string, any>) {
-    let searchParams = ""
-    for (let key of Object.keys(params)) {
-        if (searchParams.length != 0) searchParams = searchParams + "&"
-        searchParams = searchParams + `${key}=${params[key]}`
-    }
-    return searchParams
-}
-
+import ApiUrls from "@/common/types/Api/Hoyoverse/Urls"
+import { db } from "./db"
+import ZenlessGachaType from "@/common/types/Zenless/GachaType"
+import fetchPulls from "@/common/functions/fetchPulls"
 
 
 
@@ -55,10 +27,10 @@ export default function Page() {
     const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true)
     const uid = "1500382653"
     const [standartPulls, eventPulls, weaponPulls, bangbooPulls] = [
-        useLiveQuery(() => db.pulls.where(["uid","gacha_type"]).equals([uid, String(gachatypes.standart)]).reverse().sortBy("time")),
-        useLiveQuery(() => db.pulls.where(["uid","gacha_type"]).equals([uid, String(gachatypes.event)]).reverse().sortBy("time")),
-        useLiveQuery(() => db.pulls.where(["uid","gacha_type"]).equals([uid, String(gachatypes.weapon)]).reverse().sortBy("time")),
-        useLiveQuery(() => db.pulls.where(["uid","gacha_type"]).equals([uid, String(gachatypes.bangboo)]).reverse().sortBy("time"))
+        useLiveQuery(() => db.pulls.where(["uid","gacha_type"]).equals([uid, String(ZenlessGachaType.STANDART)]).reverse().sortBy("time")),
+        useLiveQuery(() => db.pulls.where(["uid","gacha_type"]).equals([uid, String(ZenlessGachaType.STANDART)]).reverse().sortBy("time")),
+        useLiveQuery(() => db.pulls.where(["uid","gacha_type"]).equals([uid, String(ZenlessGachaType.STANDART)]).reverse().sortBy("time")),
+        useLiveQuery(() => db.pulls.where(["uid","gacha_type"]).equals([uid, String(ZenlessGachaType.STANDART)]).reverse().sortBy("time"))
     ]
     useEffect(() => {
         if (isInitialLoad) {
@@ -66,7 +38,7 @@ export default function Page() {
             return
         }
         async function fetchData() {
-            await fetchPulls(input)
+            await fetchPulls(ApiUrls.ZENLESS, new URLSearchParams(input), ZenlessGachaType)
         }
         fetchData()
     }, [trigger])

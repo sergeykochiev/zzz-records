@@ -1,4 +1,4 @@
-import HoyoParams from "@/common/dto/Hoyoverse/HoyoParams";
+import HoyoParams from "@/common/types/Api/Hoyoverse/Params";
 import StringifiedHoyoParams from "@/common/types/StringifiedHoyoParams";
 export default function stringifyParamsValues(params: HoyoParams): StringifiedHoyoParams {
     const keys = Object.keys(params) as (keyof HoyoParams)[]

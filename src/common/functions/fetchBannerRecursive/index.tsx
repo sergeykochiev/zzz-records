@@ -1,10 +1,11 @@
-import HoyoParams from "@/common/dto/Hoyoverse/HoyoParams"
+import HoyoParams from "@/common/types/Api/Hoyoverse/Params"
 import getUrl from "../getUrl"
 import HoyoResponse from "@/common/dto/Hoyoverse/HoyoResponse"
 import { PullEntity, StatEntity } from "@/app/db"
-export default async function fetchBannerRecursive(rootUrl: string, params: HoyoParams, pulls: PullEntity[] = [], stats: StatEntity = {
+import StringifiedHoyoParams from "@/common/types/StringifiedHoyoParams"
+export default async function fetchBannerRecursive(rootUrl: string, params: StringifiedHoyoParams, pulls: PullEntity[] = [], stats: StatEntity = {
     uid: "",
-    gacha_type: params.real_gacha_type,
+    gacha_type: Number(params.real_gacha_type),
     count: 0,
     countA: 0,
     countS: 0,
@@ -32,7 +33,7 @@ export default async function fetchBannerRecursive(rootUrl: string, params: Hoyo
         return
     }
     if (json.data.list.length == 0) {
-        params.end_id = 0
+        params.end_id = "0"
         if (helpers.lastAIdx >= 0) stats.avgAPity += pulls[helpers.lastAIdx].pity
         if (helpers.lastSIdx >= 0) stats.avgSPity += pulls[helpers.lastSIdx].pity
         stats.avgAPity /= stats.countA
@@ -84,7 +85,7 @@ export default async function fetchBannerRecursive(rootUrl: string, params: Hoyo
         pulls.push(newPull)
         
     }
-    params.end_id = Number(pulls[pulls.length - 1].id)
+    params.end_id = pulls[pulls.length - 1].id
     console.log(`Fetched ${pulls.length} pulls from banner ${params.real_gacha_type}`)
     await new Promise(e => setTimeout(e, 300));
     return await fetchBannerRecursive(rootUrl, params, pulls, stats, helpers)

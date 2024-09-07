@@ -1,7 +1,7 @@
-enum ZenlessGachaType {
-    STANDART = "1",
-    EVENT = "2",
-    WEAPON = "3",
-    BABGBOO = "5"
+enum GenshinGachaType {
+    STANDART = 1,
+    EVENT = 2,
+    WEAPON = 3,
+    CHRONICLE = 5
 }
-export default ZenlessGachaType
+export default GenshinGachaType
