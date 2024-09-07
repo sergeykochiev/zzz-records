@@ -1,6 +1,6 @@
-import GenericHoyoData from "../../GenericHoyoData";
+import HoyoData from "../../Hoyoverse/HoyoData";
 import ZenlessPull from "../Pull";
-interface ZenlessData extends GenericHoyoData {
+interface ZenlessData extends HoyoData {
     list: ZenlessPull[]
 }
 export default ZenlessData

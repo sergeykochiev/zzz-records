@@ -1,10 +1,10 @@
-import ZenlessPull from "@/common/dto/Zenless/Pull"
+import HoyoPull from "@/common/dto/Hoyoverse/HoyoPull"
 import GameUniqueComponentProps from "@/common/types/GameUniqueComponentProps"
 import { useState } from "react"
-interface PullProps extends GameUniqueComponentProps {
-    pull: ZenlessPull
+interface PullComponentProps extends GameUniqueComponentProps {
+    pull: HoyoPull
 }
-function Pull({ pull, kind }: PullProps) {
+export default function PullComponent({ pull, kind }: PullComponentProps) {
     const [opened, setOpened] = useState<boolean>(false)
     return <div className={`select-none w-full flex flex-col ${opened && "bg-slate-400 shadow"} rounded-[22px] p-[2px]`}>
         <div onClick={() => setOpened(!opened)} className={`cursor-pointer transition-all ${pull.rank_type == "2" && "bg-slate-200"} ${pull.rank_type == "3" && "bg-purple-200"} ${pull.rank_type == "4" && "bg-orange-200"} grid grid-cols-[2fr,1fr,1fr] whitespace-nowrap py-[8px] px-[16px] rounded-[20px] place-items-center gap-[8px]`}>

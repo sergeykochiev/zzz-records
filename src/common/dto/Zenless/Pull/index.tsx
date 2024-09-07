@@ -1,8 +1,8 @@
 import ZenlessGachaType from "@/common/types/Zenless/GachaType";
-import GenericHoyoPull from "../../GenericHoyoPull";
 import ZenlessItemType from "@/common/types/Zenless/ItemType";
 import ZenlessRankType from "@/common/types/Zenless/RankType";
-interface ZenlessPull extends GenericHoyoPull {
+import HoyoPull from "../../Hoyoverse/HoyoPull";
+interface ZenlessPull extends HoyoPull {
     gacha_type: ZenlessGachaType
     item_type: ZenlessItemType
     rank_type: ZenlessRankType

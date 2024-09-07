@@ -1,8 +1,8 @@
-interface GenericHoyoPull {
+interface HoyoPull {
     uid: string,
     gacha_id: string
     item_id: string
-    count: 1
+    count: "1"
     time: string
     name: string
     lang: string
@@ -11,4 +11,4 @@ interface GenericHoyoPull {
     gacha_type: string
     rank_type: string
 }
-export default GenericHoyoPull
+export default HoyoPull

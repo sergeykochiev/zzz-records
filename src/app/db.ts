@@ -1,6 +1,6 @@
 import Dexie, { EntityTable } from "dexie";
 
-export interface Pull {
+export interface PullEntity {
     uid: string,
     gacha_type: "1" | "2" | "3" | "5"
     item_id: string
@@ -11,9 +11,9 @@ export interface Pull {
     id: string
     pity: number
 }
-export interface Stat {
+export interface StatEntity {
     uid: string
-    gacha_type: 1 | 2 | 3 | 5
+    gacha_type: number
     currentAPity: number
     currentSPity: number
     nextAIsUp: boolean
@@ -24,14 +24,14 @@ export interface Stat {
     avgSPity: number
     count: number
 }
-export interface GameAccound {
+export interface GameAccountEntity {
     id?: number
     uid: string
 }
 export const db = new Dexie("zzz-db") as Dexie & {
-    pulls: EntityTable<Pull, 'id'>,
-    gameaccs: EntityTable<GameAccound, 'id'>,
-    stats: EntityTable<Stat>
+    pulls: EntityTable<PullEntity, 'id'>,
+    gameaccs: EntityTable<GameAccountEntity, 'id'>,
+    stats: EntityTable<StatEntity>
 }
 db.version(1).stores({
     pulls: "id, [uid+gacha_type], item_id, time, name, item_type, rank_type",

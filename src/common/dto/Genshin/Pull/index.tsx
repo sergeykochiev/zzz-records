@@ -1,5 +1,5 @@
 import ZenlessGachaType from "@/common/types/Zenless/GachaType";
-import GenericHoyoPull from "../../GenericHoyoPull";
+import GenericHoyoPull from "../../Hoyoverse/HoyoPull";
 import ZenlessItemType from "@/common/types/Zenless/ItemType";
 import ZenlessRankType from "@/common/types/Zenless/RankType";
 interface ZenlessPull extends GenericHoyoPull {
