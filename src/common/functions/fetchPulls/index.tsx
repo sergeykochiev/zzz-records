@@ -1,14 +1,13 @@
 import { PullEntity, StatEntity } from "@/app/db"
-import HoyoParams from "@/common/types/api/Hoyoverse/Params"
-import fetchSingleGachaTypePulls from "../fetchSingleGachaTypePulls"
-import ZenlessGachaType from "@/common/types/dto/Zenless/GachaType"
-import StringifiedHoyoParams from "@/common/types/StringifiedHoyoParams"
-export default async function fetchPulls<TargetGachaType extends ZenlessGachaType>(rootUrl: string, params: StringifiedHoyoParams, gachaTypes: TargetGachaType): Promise<[PullEntity[], StatEntity[]]> {
+import OneOfParams from "@/common/types/api/exclusive/Params"
+import OneOfGachaType from "@/common/types/dto/exclusive/GachaType"
+import fetchBannerRecursive from "../fetchBannerRecursive"
+export default async function fetchPulls(rootUrl: string, params: OneOfParams, gachaTypes: OneOfGachaType): Promise<[PullEntity[], StatEntity[]]> {
     let pulls: PullEntity[] = []
     let stats: StatEntity[] = []
-    for (let gachatype of Object.keys(gachaTypes)) {
+    for (let gachatype of Object.values(gachaTypes)) {
         params.gacha_type = gachatype as TargetGachaType
-        const bannerData = await fetchSingleGachaTypePulls(rootUrl, params)
+        const bannerData = await fetchBannerRecursive(rootUrl, params)
         if (bannerData) {
             pulls.concat(bannerData[0])
             stats.concat(bannerData[1])
