@@ -1,4 +1,4 @@
-import OneOf from "@/common/types/OneOf";
+import OneOf from "@/common/types/OneOfChoice";
 import GenshinGachaType from "../../Genshin/GachaType";
 import StarrailGachaType from "../../Starrail/GachaType";
 import ZenlessGachaType from "../../Zenless/GachaType";

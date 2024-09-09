@@ -9,29 +9,32 @@ import ZenlessParams from "@/common/types/api/Zenless/Params"
 import HoyoParams from "@/common/types/api/Hoyoverse/Params"
 import GenshinParams from "@/common/types/api/Genshin/Params"
 import TargetParams from "@/common/types/functionDifferentiation/TargetParams"
-type FetchBannerRecursiveFunctionType = (fn: {
-    params: HoyoParams
-}) => Promise<[PullEntity[], StatEntity] | void>
-type FetchPullsFunctionType = (fn: {
-    params: HoyoParams
-    fetchBannerRecursiveFunc: FetchBannerRecursiveFunctionType
-}) => Promise<[PullEntity[], StatEntity[]]>
+type FetchBannerRecursiveFunctionType<T> = (
+    params: HoyoParams,
+    pulls?: PullEntity[],
+    stat?: StatEntity,
+    helpers?: {}
+) => Promise<[PullEntity[], StatEntity] | void>
+type FetchPullsFunctionType<T extends Games> = (
+    params: TargetParams<T>,
+    fetchBannerRecursiveFunc: FetchBannerRecursiveFunctionType<T>
+) => Promise<[PullEntity[], StatEntity[]]>
 const TargetGachaType = {
     1: GenshinGachaType,
     2: StarrailGachaType,
     3: ZenlessGachaType
 }
-export function fetchPullsFactory(game: Games): FetchPullsFunctionType {
+export function fetchPullsFactory<T extends Games>(game: T): FetchPullsFunctionType<T> {
     const field = game == Games.ZENLESS ? "real_gacha_type" : "gacha_type"
-    const fetchPulls = async function(params: TargetParams<typeof game>) {
+    const fetchPulls = async function(params: TargetParams<T>, fetchBannerRecursiveFunc: FetchBannerRecursiveFunctionType<T>): Promise<[PullEntity[], StatEntity[]]> {
         let pulls: PullEntity[] = []
         let stats: StatEntity[] = []
         for (let gachatype of Object.values(TargetGachaType[game])) {
-            params[field] = gachatype
-            const bannerData = await 
+            params[field] as typeof (TargetGachaType[game]) = gachatype
+            const bannerData = await fetchBannerRecursiveFunc(params)
             if (bannerData) {
                 pulls.concat(bannerData[0])
-                stats.concat(bannerData[1])
+                stats.push(bannerData[1])
             }
         }
         // await db.pulls.bulkPut(pulls)

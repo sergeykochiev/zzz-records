@@ -1,0 +1,2 @@
+type OneOfChoice<Target, F, S, T> = (F | S | T) & (Target extends F ? F : Record<Exclude<keyof F, keyof (F | S | T)>, never>) & (Target extends S ? S : Record<Exclude<keyof S, keyof (F | S | T)>, never>) & (Target extends T ? T : Record<Exclude<keyof T, keyof (F | S | T)>, never>)
+export default OneOfChoice

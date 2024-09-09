@@ -8,7 +8,7 @@ export default function fetchBannerRecursiveFunctionFactory(game: Games) {
     const rootUrl = GachaLogApiRouteUrls[game]
     const fetchBannerRecursive = async function(params: TargetParams<typeof game>, pulls: PullEntity[] = [], stats: StatEntity = {
         uid: "",
-        gachaType: game == Games.ZENLESS ? params["real_gacha_type"] : params["gacha_type"],
+        gachaType: game == Games.ZENLESS ? params["real_gacha_type"] : params["real_gacha_type"],
         count: 0,
         countEpic: 0,
         countLegendary: 0,
