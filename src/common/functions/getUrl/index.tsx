@@ -1,7 +1,5 @@
 import HoyoParams from "@/common/types/api/Hoyoverse/Params";
-import stringifyParamsValues from "../stringifyParamsValues";
-import StringifiedHoyoParams from "@/common/types/StringifiedHoyoParams";
-export default function getUrl(rootUrl: string, params: StringifiedHoyoParams) {
+export default function getUrl(rootUrl: string, params: HoyoParams) {
     // const stringifiedParams = stringifyParamsValues(params) //stringifies params
-    return `${rootUrl}?${new URLSearchParams(params)}`
+    return `${rootUrl}?${new URLSearchParams(params as Record<keyof HoyoParams, string>)}`
 }
