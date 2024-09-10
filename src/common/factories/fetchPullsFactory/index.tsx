@@ -9,6 +9,13 @@ import ZenlessParams from "@/common/types/api/Zenless/Params"
 import HoyoParams from "@/common/types/api/Hoyoverse/Params"
 import GenshinParams from "@/common/types/api/Genshin/Params"
 import TargetParams from "@/common/types/functionDifferentiation/TargetParams"
+import TargetGachaType from "@/common/types/functionDifferentiation/TargetGachaType"
+import GamesGachaTypes from "@/common/maps/GamesGachaTypes"
+const GameTypes: Record<keyof typeof Games, Games> = {
+    GENSHIN: 1,
+    STARRAIL: 2,
+    ZENLESS: 3
+}
 type FetchBannerRecursiveFunctionType<T> = (
     params: HoyoParams,
     pulls?: PullEntity[],
@@ -19,18 +26,14 @@ type FetchPullsFunctionType<T extends Games> = (
     params: TargetParams<T>,
     fetchBannerRecursiveFunc: FetchBannerRecursiveFunctionType<T>
 ) => Promise<[PullEntity[], StatEntity[]]>
-const TargetGachaType = {
-    1: GenshinGachaType,
-    2: StarrailGachaType,
-    3: ZenlessGachaType
-}
+
 export function fetchPullsFactory<T extends Games>(game: T): FetchPullsFunctionType<T> {
     const field = game == Games.ZENLESS ? "real_gacha_type" : "gacha_type"
     const fetchPulls = async function(params: TargetParams<T>, fetchBannerRecursiveFunc: FetchBannerRecursiveFunctionType<T>): Promise<[PullEntity[], StatEntity[]]> {
         let pulls: PullEntity[] = []
         let stats: StatEntity[] = []
-        for (let gachatype of Object.values(TargetGachaType[game])) {
-            params[field] as typeof (TargetGachaType[game]) = gachatype
+        for (let gachatype in (Object.values(GamesGachaTypes[game]) as TargetGachaType<T>[])) {
+            params[field] = gachatype
             const bannerData = await fetchBannerRecursiveFunc(params)
             if (bannerData) {
                 pulls.concat(bannerData[0])
