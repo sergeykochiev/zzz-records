@@ -1,2 +1,4 @@
-type OneOfChoice<Target, F, S, T> = (F | S | T) & (Target extends F ? F : Record<Exclude<keyof F, keyof (F | S | T)>, never>) & (Target extends S ? S : Record<Exclude<keyof S, keyof (F | S | T)>, never>) & (Target extends T ? T : Record<Exclude<keyof T, keyof (F | S | T)>, never>)
+import OneOf from "../OneOf"
+// type OneOfChoice<Target extends Partial<OneOf<F, S, T>>, F, S, T> = (F | S | T) & (Target extends F ? F : Record<Exclude<keyof F, keyof (S | T)>, never>) & (Target extends S ? S : Record<Exclude<keyof S, keyof (F | T)>, never>) & (Target extends T ? T : Record<Exclude<keyof T, keyof (F | S)>, never>)
+type OneOfChoice<Target extends Partial<OneOf<F, S, T>>, F, S, T> = Target extends F ? (Record<Exclude<keyof (S & T), keyof F>, never> & F) : Target extends S ? (Record<Exclude<keyof (F & T), keyof S>, never> & S) : (Record<Exclude<keyof (S & F), keyof T>, never>) & T
 export default OneOfChoice

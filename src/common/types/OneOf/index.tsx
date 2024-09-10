@@ -1,0 +1,2 @@
+type OneOf<F, S, T> = (Record<Exclude<keyof (S & T), keyof F>, never> & F) | (Record<Exclude<keyof (F & T), keyof S>, never> & S) | (Record<Exclude<keyof (S & F), keyof T>, never>) & T
+export default OneOf

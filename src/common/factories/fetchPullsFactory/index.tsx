@@ -11,6 +11,7 @@ import GenshinParams from "@/common/types/api/Genshin/Params"
 import TargetParams from "@/common/types/functionDifferentiation/TargetParams"
 import TargetGachaType from "@/common/types/functionDifferentiation/TargetGachaType"
 import GamesGachaTypes from "@/common/maps/GamesGachaTypes"
+import OneOf from "@/common/types/OneOf"
 const GameTypes: Record<keyof typeof Games, Games> = {
     GENSHIN: 1,
     STARRAIL: 2,
@@ -28,12 +29,13 @@ type FetchPullsFunctionType<T extends Games> = (
 ) => Promise<[PullEntity[], StatEntity[]]>
 
 export function fetchPullsFactory<T extends Games>(game: T): FetchPullsFunctionType<T> {
-    const field = game == Games.ZENLESS ? "real_gacha_type" : "gacha_type"
+    type Field = T extends Games.ZENLESS ? "real_gacha_type" : "gacha_type"
+    const field: Field = game == Games.ZENLESS ? "real_gacha_type" : "gacha_type"
     const fetchPulls = async function(params: TargetParams<T>, fetchBannerRecursiveFunc: FetchBannerRecursiveFunctionType<T>): Promise<[PullEntity[], StatEntity[]]> {
         let pulls: PullEntity[] = []
         let stats: StatEntity[] = []
         for (let gachatype in (Object.values(GamesGachaTypes[game]) as TargetGachaType<T>[])) {
-            params[field] = gachatype
+            params[field as ] = gachatype
             const bannerData = await fetchBannerRecursiveFunc(params)
             if (bannerData) {
                 pulls.concat(bannerData[0])
