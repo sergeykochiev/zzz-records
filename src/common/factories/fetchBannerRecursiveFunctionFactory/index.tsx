@@ -1,12 +1,13 @@
 import getUrl from "../../functions/getUrl"
-import { PullEntity, StatEntity } from "@/app/db"
 import Games from "@/common/types/Games"
 import TargetParams from "@/common/types/functionDifferentiation/TargetParams"
 import GachaLogApiRouteUrls from "@/common/maps/GachaLogRouteApiUrls"
 import TargetResponse from "@/common/types/functionDifferentiation/TargetResponse"
-export default function fetchBannerRecursiveFunctionFactory(game: Games) {
+import StatEntity from "@/common/database/entities/Stat"
+import TargetPullEntity from "@/common/types/functionDifferentiation/TargetPullEntity"
+export default function fetchBannerRecursiveFunctionFactory<T extends Games>(game: T) {
     const rootUrl = GachaLogApiRouteUrls[game]
-    const fetchBannerRecursive = async function(params: TargetParams<typeof game>, pulls: PullEntity[] = [], stats: StatEntity = {
+    const fetchBannerRecursive = async function(params: TargetParams<typeof game>, pulls: TargetPullEntity<T>[] = [], stats: StatEntity = {
         uid: "",
         gachaType: game == Games.ZENLESS ? params["real_gacha_type"] : params["real_gacha_type"],
         count: 0,
@@ -23,7 +24,7 @@ export default function fetchBannerRecursiveFunctionFactory(game: Games) {
         foundLegendaryPity: false,
         lastEpicIdx: -1,
         lastLegendaryIdx: -1,
-    }): Promise<[PullEntity[], StatEntity] | void> {
+    }): Promise<[TargetPullEntity<T>[], StatEntity] | void> {
         const url = getUrl(rootUrl, params)
         const res = await fetch(url)
         if (!res.ok) {
@@ -44,14 +45,14 @@ export default function fetchBannerRecursiveFunctionFactory(game: Games) {
             return [pulls, stats]
         }
         for (const pull of json.data.list) {
-            const newPull: PullEntity = {
+            const newPull: TargetPullEntity<T> = {
                 uid: pull.uid,
-                gacha_type: pull.gacha_type,
-                item_id: pull.item_id,
+                gachaType: pull.gacha_type,
+                itemId: pull.item_id,
                 time: pull.time,
                 name: pull.name,
-                item_type: pull.item_type,
-                rank_type: pull.rank_type,
+                itemType: pull.item_type,
+                rankType: pull.rank_type,
                 id: pull.id,
                 pity: 0
             }
