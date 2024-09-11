@@ -84,7 +84,7 @@ def test_fetch(link):
     game_biz, authkey = linkparams['game_biz'][0], linkparams['authkey'][0]
     params["authkey"] = authkey
     params["size"] = 1
-    params["real_gacha_type"] = 6
+    params["real_gacha_type"] = 5
     params["game_biz"] = game_biz
     emptyparams = []
     for key in params:
