@@ -1,3 +1,3 @@
-import ZenlessParams from "../../../api/Zenless/Params";
-type ZenlessGachaTypeField = keyof Pick<ZenlessParams, "real_gacha_type">
+import ZenlessParamsClass from "../../../api/Zenless/Params";
+type ZenlessGachaTypeField = keyof Pick<ZenlessParamsClass, "real_gacha_type">
 export default ZenlessGachaTypeField
