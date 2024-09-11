@@ -1,2 +1,3 @@
-type OneOf<F, S, T> = ({ [H in Exclude<keyof (S & T), keyof F>]: never } & F) | ({ [H in Exclude<keyof (F & T), keyof S>]: never } & S) | ({ [H in Exclude<keyof (S & F), keyof T>]: never } & T) & T
+type FirstAndNeverOther<F, S, T> = { [Key in Exclude<keyof (S & T), keyof F>]: never } & F
+type OneOf<F, S, T> = FirstAndNeverOther<F, S, T> | FirstAndNeverOther<S, F, T> | FirstAndNeverOther<T, F, S>
 export default OneOf

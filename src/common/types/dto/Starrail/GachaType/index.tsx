@@ -1,4 +1,4 @@
-enum StarrailGachaType {
+enum    StarrailGachaType {
     STANDART = 1,
     EVENT_CHARACTER = 11,
     EVENT_WEAPON = 12,
