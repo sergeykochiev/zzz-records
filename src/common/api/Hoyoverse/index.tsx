@@ -3,15 +3,13 @@ import HoyoParams from "./Params"
 import PullEntity from "@/common/database/entities/Pull"
 import StatEntity from "@/common/database/entities/Stat"
 import HoyoPull from "@/common/types/dto/Hoyoverse/HoyoPull"
-import AllOf from "@/common/types/AllOf"
 import GenshinGachaType from "@/common/types/dto/Genshin/GachaType"
 import ZenlessGachaType from "@/common/types/dto/Zenless/GachaType"
 import StarrailGachaType from "@/common/types/dto/Starrail/GachaType"
-import OneOf from "@/common/types/OneOf"
 import GenshinRankType from "@/common/types/dto/Genshin/RankType"
 import StarrailRankType from "@/common/types/dto/Starrail/RankType"
 import ZenlessRankType from "@/common/types/dto/Zenless/RankType"
-import GachaLogApiRouteUrls from "@/common/types/GachaLogRouteApiUrls"
+import GachaLogApiRouteUrls from "@/common/enum/GachaLogRouteApiUrls"
 class HoyoApiClass<GachaType extends GenshinGachaType | StarrailGachaType | ZenlessGachaType> {
     private params: Partial<HoyoParams> = {
         authkey_ver: 1,
@@ -32,7 +30,7 @@ class HoyoApiClass<GachaType extends GenshinGachaType | StarrailGachaType | Zenl
         gameBiz: string,
         private gachaTypeField: "real_gacha_type" | "gacha_type",
         private rankTypes: Record<keyof typeof GenshinRankType, GenshinRankType | StarrailRankType | ZenlessRankType>,
-        private gachaTypes: GachaType,
+        private gachaTypes: Record<keyof typeof GenshinGachaType, GachaType> | Record<keyof typeof ZenlessGachaType, GachaType> | Record<keyof typeof StarrailGachaType, GachaType>,
         private url: GachaLogApiRouteUrls
     ) {
         this.params = {
@@ -103,7 +101,7 @@ class HoyoApiClass<GachaType extends GenshinGachaType | StarrailGachaType | Zenl
     async fetchPulls() {
         for (let gachatype of Object.values(this.gachaTypes)) {
             this.params[this.gachaTypeField] = gachatype
-            const bannerData = await this.fetchBannerRecursive()
+            await this.fetchBannerRecursive()
         }
         // await db.pulls.bulkPut(pulls)
         // await db.stats.bulkPut(stats)
@@ -138,7 +136,7 @@ class HoyoApiClass<GachaType extends GenshinGachaType | StarrailGachaType | Zenl
         this.params.end_id = Number(currentPulls[currentPulls.length - 1].id)
         console.log(`Fetched ${currentPulls.length} pulls from banner ${this.gachaTypeField}`)
         await new Promise(e => setTimeout(e, 300));
-        return await this.fetchBannerRecursive()
+        await this.fetchBannerRecursive()
     }
 }
 export default HoyoApiClass

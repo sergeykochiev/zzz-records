@@ -1,6 +1,6 @@
 "use client"
 
-import GameKinds from "@/common/types/Games"
+import GameKinds from "@/common/enum/Games"
 import Input from "@/components/Input"
 import { ReactNode, useEffect, useRef, useState } from "react"
 import { useLiveQuery } from "dexie-react-hooks"

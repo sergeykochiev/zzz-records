@@ -1,4 +1,4 @@
-import GameKinds from "@/common/types/Games";
+import GameKinds from "@/common/enum/Games";
 const tabClassnameFromKind: Record<GameKinds, string> = {
     1: "has-[input:checked]:bg-hwh-genshin-green hover:outline-hwh-genshin-green",
     2: "has-[input:checked]:bg-hwh-starrail-blue hover:outline-hwh-starrail-blue",

@@ -1,4 +1,4 @@
-import Games from "../Games";
+import Games from "../../enum/Games";
 interface GameUniqueComponentProps {
     kind: Games
 }

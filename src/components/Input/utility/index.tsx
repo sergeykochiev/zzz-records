@@ -1,4 +1,4 @@
-import GameKinds from "@/common/types/Games";
+import GameKinds from "@/common/enum/Games";
 const inputClassnameFromKind: Record<GameKinds, string> = {
     1: "focus:bg-hwh-genshin-green",
     2: "focus:bg-hwh-starrail-blue",

@@ -1,3 +1,4 @@
-import StarrailParamsClass from "@/common/api/Starrail/Params";
-type StarrailGachaTypeField = keyof Pick<StarrailParamsClass, "gacha_type">
+import HoyoParams from "@/common/api/Hoyoverse/Params"
+import CommonGachaTypeField from "../../CommonGachaTypeField"
+type StarrailGachaTypeField = keyof Pick<HoyoParams, CommonGachaTypeField>
 export default StarrailGachaTypeField
