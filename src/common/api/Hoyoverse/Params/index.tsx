@@ -7,27 +7,7 @@ interface HoyoParams extends Record<keyof Pick<CachedUrlParams, minimumNeccesarr
     game_biz: string,
     size: number
     end_id: number
-    getStringifiedParams: () => Pick<CachedUrlParams, minimumNeccesarryParams>
+    gacha_type?: number
+    real_gacha_type?: number
 }
-class HoyoParamsAbstractClass implements HoyoParams {
-    constructor(
-        public authkey_ver: number,
-        public authkey: string,
-        public lang: string,
-        public game_biz: string,
-        public size: number,
-        public end_id: number
-    ) {}
-    getStringifiedParams() {
-        return {
-            authkey_ver: '' + this.authkey_ver,
-            authkey: '' + this.authkey,
-            lang: '' + this.lang,
-            game_biz: '' + this.game_biz,
-            size: '' + this.size,
-            end_id: '' + this.end_id
-        }
-    }
-}
-export type { HoyoParams }
-export default HoyoParamsAbstractClass
+export default HoyoParams

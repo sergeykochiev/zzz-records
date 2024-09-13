@@ -8,7 +8,6 @@ interface HoyoPull {
     lang: string
     id: string
     item_type: string
-    gacha_type: string
-    rank_type: string
+    rank_type: number
 }
 export default HoyoPull
