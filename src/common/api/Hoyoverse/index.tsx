@@ -10,6 +10,8 @@ import GenshinRankType from "@/common/types/dto/Genshin/RankType"
 import StarrailRankType from "@/common/types/dto/Starrail/RankType"
 import ZenlessRankType from "@/common/types/dto/Zenless/RankType"
 import GachaLogApiRouteUrls from "@/common/enum/GachaLogRouteApiUrls"
+import HoyoApiError from "@/common/error/HoyoApiError"
+import HoyoResponse from "@/common/types/dto/Hoyoverse/HoyoResponse"
 class HoyoApiClass<GachaType extends GenshinGachaType | StarrailGachaType | ZenlessGachaType> {
     private params: Partial<HoyoParams> = {
         authkey_ver: 1,
@@ -51,6 +53,17 @@ class HoyoApiClass<GachaType extends GenshinGachaType | StarrailGachaType | Zenl
     }
     getUrl() {
         return `${this.url}?${new URLSearchParams(this.getStringifiedParams())}`
+    }
+    async checkAuthkey() {
+        this.params.size = 1
+        const url = this.getUrl()
+        const res = await fetch(url)
+        if (!res.ok) throw Error("Fetch error")
+        const jsonRes: HoyoResponse = await res.json()
+        if (jsonRes.retcode != 101) {
+            throw new HoyoApiError(jsonRes.retcode, jsonRes.message)
+        }
+        return true
     }
     handleIncomingPull(pull: HoyoPull) {
         const currentGachaType = this.params[this.gachaTypeField]! as GachaType
@@ -99,6 +112,7 @@ class HoyoApiClass<GachaType extends GenshinGachaType | StarrailGachaType | Zenl
         return newPull
     }
     async fetchPulls() {
+        this.params.size = 20
         for (let gachatype of Object.values(this.gachaTypes)) {
             this.params[this.gachaTypeField] = gachatype
             await this.fetchBannerRecursive()
