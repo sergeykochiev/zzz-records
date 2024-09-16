@@ -1,5 +1,5 @@
 import Games from "../../enum/Games";
 interface GameUniqueComponentProps {
-    kind: Games
+    game: Games
 }
 export default GameUniqueComponentProps
