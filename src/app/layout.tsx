@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Tab from "@/components/Tab";
 import Games from "@/common/enum/Games";
+import MainNavBar from "@/components/MainNavBar";
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -21,17 +22,7 @@ export default function RootLayout({
             <body className={inter.className}>
                 <main>
                     <header>
-                        <div className="flex items-center gap-[8px]">
-                            <Tab name="main-nav" game={Games.GENSHIN}>
-                                Genshin Impact
-                            </Tab>
-                            <Tab name="main-nav" game={Games.STARRAIL}>
-                                Honkai: Star Rail
-                            </Tab>
-                            <Tab name="main-nav" game={Games.ZENLESS}>
-                                Zenless Zone Zero
-                            </Tab>
-                        </div>
+                        <MainNavBar/>
                     </header>
                 </main>
                 {children}
