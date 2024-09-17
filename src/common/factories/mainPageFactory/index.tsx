@@ -22,7 +22,14 @@ import PullListHeading from "../../../components/PullListHeading";
 import PullsList from "../../../components/PullList";
 import StatEntity from "@/common/database/entities/Stat";
 import NoDataPlaceholder from "@/components/NoDataPlaceholder";
-interface MainPageProps<GachaType extends GenshinGachaType | StarrailGachaType | ZenlessGachaType, RankType extends GenshinRankType | ZenlessRankType | StarrailRankType> {
+import H2 from "@/components/HeadingSecond";
+import NavBarWrapper from "@/components/NavBarWrapper";
+import Tab from "@/components/Tab";
+import TargetGachaType from "@/common/types/TargetGachaType";
+import TargetGachaTypeEnum from "@/common/types/TargetGachaType";
+import GachaTypeNavBar from "@/components/GachaTypeNavBar";
+import Section from "@/components/Section";
+export interface MainPageArgs<GachaType extends GenshinGachaType | StarrailGachaType | ZenlessGachaType, RankType extends GenshinRankType | ZenlessRankType | StarrailRankType> {
     game: Games
     dbInstance: Dexie & {
         pulls: EntityTable<PullEntity & {
@@ -34,54 +41,41 @@ interface MainPageProps<GachaType extends GenshinGachaType | StarrailGachaType |
             gachaType: GachaType
         }>
     }
-    gachaTypes: Record<keyof typeof GenshinGachaType, GachaType> | Record<keyof typeof ZenlessGachaType, GachaType> | Record<keyof typeof StarrailGachaType, GachaType>,
+    gachaTypes: TargetGachaTypeEnum<GachaType>,
     rankTypes: Record<keyof typeof GenshinRankType, RankType>
 }
-export default function mainPageFactory<GachaType extends GenshinGachaType | StarrailGachaType | ZenlessGachaType, RankType extends GenshinRankType | ZenlessRankType | StarrailRankType>(props: MainPageProps<GachaType, RankType>) {
-    const MainPage = function() {
+export default function mainPageFactory<GachaType extends GenshinGachaType | StarrailGachaType | ZenlessGachaType, RankType extends GenshinRankType | ZenlessRankType | StarrailRankType>(args: MainPageArgs<GachaType, RankType>) {
+    const MainPage = function({ children }: { children: React.ReactNode }) {
         const [trigger, setTrigger] = useState<boolean>(false)
         const [input, setInput] = useState<string>("")
         const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true)
         const uid = "1500382653"
-        const getBanners = () => {
-            const bannerPulls: Partial<Record<  GachaType, PullEntity[]>> = {}
-            for (let gachatype of Object.entries(props.gachaTypes)) {
-                const [key, value] = gachatype
-                if(!+key) continue
-                console.log(gachatype)
-                console.log(value)
-                console.log(key, value)
-                bannerPulls[value] = (useLiveQuery(() => props.dbInstance.pulls.where(["uid","gacha_type"]).equals([uid, value]).reverse().sortBy("time")))!
-            }
-            return bannerPulls
-        }
+        // const getBanners = () => {
+        //     const bannerPulls: Partial<Record<GachaType, PullEntity[]>> = {}
+        //     for (let gachatype of Object.entries(args.gachaTypes)) {
+        //         const [key, value] = gachatype
+        //         if(!+key) continue
+        //         bannerPulls[value] = (useLiveQuery(() => args.dbInstance.pulls.where(["uid","gacha_type"]).equals([uid, value]).reverse().sortBy("time")))!
+        //     }
+        //     return bannerPulls
+        // }
         useEffect(() => {
             if (isInitialLoad) {
                 setIsInitialLoad(false)
                 return
             }
         }, [trigger])
-        const bannerPulls = getBanners()
-        return <main className="px-[128px] py-[128px] flex flex-col gap-[64px] items-center bg-gray-100 min-h-screen">
-            <div className="w-full bg-white flex flex-col gap-[10px]">
-                <h2 className="text-[20px] py-0 my-0 text-hwh-white-text-dark font-bold">Fetch pulls</h2>
-                <div className="flex gap-[10px]">
-                    <Input game={props.game} value={input} onChange={e => setInput(e.target.value)} placeholder="Enter your authkey" name="authkey"/>
-                    <Button game={props.game} onClick={() => setTrigger(!trigger)}>Fetch</Button>
+        // const bannerPulls = getBanners()
+        return <>
+            <Section label="Fetch pulls">
+                <div className="flex gap-[8px]">
+                    <Input game={args.game} value={input} onChange={e => setInput(e.target.value)} placeholder="URL from cache..." name="authkey"/>
+                    <Button game={args.game} onClick={() => setTrigger(!trigger)}>Fetch</Button>
                 </div>
-            </div>
-            <div className="flex gap-[16px] w-full font-medium text-slate-700">
-                {
-                    Object.keys(bannerPulls).map(key => {
-                        const currentPulls = bannerPulls[key]!
-                        return <div className="flex flex-col gap-[16px]">
-                            <PullListHeading>{key}</PullListHeading>
-                            {currentPulls ? <PullsList pulls={currentPulls} rankTypes={props.rankTypes} game={props.game}/> : <NoDataPlaceholder/>}
-                        </div>
-                    })
-                }
-            </div>
-        </main>
+            </Section>
+            <GachaTypeNavBar gachaTypes={args.gachaTypes}/>
+            {children}
+        </>
     }
     return MainPage
 }

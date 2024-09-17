@@ -1,13 +1,11 @@
 "use client"
 import { ZenlessDB } from "@/common/database/Zenless/init";
-import Games from "@/common/enum/Games";
-import mainPageFactory from "@/common/factories/mainPageFactory";
+import gachaTypePageFactory from "@/common/factories/gachaTypePage";
 import ZenlessGachaType from "@/common/types/dto/Zenless/GachaType";
 import ZenlessRankType from "@/common/types/dto/Zenless/RankType";
-const ZenlessMainPage = mainPageFactory({
-    game: Games.ZENLESS,
+const ZenlessGachaTypePage = gachaTypePageFactory({
     dbInstance: ZenlessDB,
     gachaTypes: ZenlessGachaType,
     rankTypes: ZenlessRankType
 })
-export default ZenlessMainPage
+export default ZenlessGachaTypePage

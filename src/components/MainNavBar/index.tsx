@@ -17,8 +17,8 @@ export default function MainNavBar({ gamePathIndex = 1 }: { gamePathIndex?: numb
     return <NavBarWrapper>
         {Object.keys(Games).map(key => {
             if (!+key) return
-            const gameName = Games[key as keyof typeof Games]
-            return <Tab game={gameName} onChange={() => router.push(`/${gameName}`.toLowerCase())} checked={paths[gamePathIndex] == String(gameName)} name={id}>
+            const gameName = Games[key as keyof typeof Games].toString().toLowerCase()
+            return <Tab key={gameName} game={+key as Games} onChange={() => router.push(`/${gameName}`)} checked={paths[gamePathIndex] == String(gameName)} name={id}>
                 {gameNames[Number(key) as Games]}
             </Tab>
         })}
