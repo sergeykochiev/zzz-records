@@ -62,10 +62,10 @@ export default function mainPageFactory<GachaType extends GenshinGachaType | Sta
             }
         }, [trigger])
         const bannerPulls = getBanners()
-        return <main className="px-[128px] py-[128px] flex flex-col gap-[64px]  items-center bg-gray-100 min-h-screen">
-            <div className="text-black w-full rounded-[20px] bg-white p-[32px] shadow-xl flex flex-col gap-[20px]">
-                <h1 className="text-[20px] text-slate-800 px-[24px] font-black">Fetch pulls</h1>
-                <div className="flex gap-[16px] items-stretch">
+        return <main className="px-[128px] py-[128px] flex flex-col gap-[64px] items-center bg-gray-100 min-h-screen">
+            <div className="w-full bg-white flex flex-col gap-[10px]">
+                <h2 className="text-[20px] py-0 my-0 text-hwh-white-text-dark font-bold">Fetch pulls</h2>
+                <div className="flex gap-[10px]">
                     <Input game={props.game} value={input} onChange={e => setInput(e.target.value)} placeholder="Enter your authkey" name="authkey"/>
                     <Button game={props.game} onClick={() => setTrigger(!trigger)}>Fetch</Button>
                 </div>

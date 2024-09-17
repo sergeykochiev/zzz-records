@@ -1,28 +1,26 @@
 "use client"
+import Games from "@/common/enum/Games";
+import NavBarWrapper from "../NavBarWrapper";
 import { usePathname, useRouter } from "next/navigation";
 import Tab from "../Tab";
-import Games from "@/common/enum/Games";
-interface MainNavBarProps {
-    gameNamePathIndex?: number
-}
-export default function MainNavBar({ gameNamePathIndex = 1 }: MainNavBarProps) {
-    const pathname = usePathname()
-    const paths = pathname.split("/")
+import { useId } from "react";
+export default function MainNavBar({ gamePathIndex = 1 }: { gamePathIndex?: number }) {
     const router = useRouter()
-    const gameRoutes = {
-        1: "genshin",
-        2: "starrail",
-        3: "zenless"
+    const pathname = usePathname()
+    const id = useId()
+    const paths = pathname.split("/")
+    const gameNames: Record<Games, string> = {
+        1: "Genshin Impact",
+        2: "Honkai: Star Rail",
+        3: "Zenless Zone Zero"
     }
-    return <div className="flex items-center w-full">
-        <Tab name="main-nav" checked={paths[gameNamePathIndex]==gameRoutes[Games.GENSHIN]} game={Games.GENSHIN} onChange={() => router.push(`/${gameRoutes[Games.GENSHIN]}`)}>
-            Genshin Impact
-        </Tab>
-        <Tab name="main-nav" checked={paths[gameNamePathIndex]==gameRoutes[Games.STARRAIL]} game={Games.STARRAIL} onChange={() => router.push(`/${gameRoutes[Games.STARRAIL]}`)}>
-            Honkai: Star Rail
-        </Tab>
-        <Tab name="main-nav" checked={paths[gameNamePathIndex]==gameRoutes[Games.ZENLESS]} game={Games.ZENLESS} onChange={() => router.push(`/${gameRoutes[Games.ZENLESS]}`)}>
-            Zenless Zone Zero
-        </Tab>
-    </div>
+    return <NavBarWrapper>
+        {Object.keys(Games).map(key => {
+            if (!+key) return
+            const gameName = Games[key as keyof typeof Games]
+            return <Tab game={gameName} onChange={() => router.push(`/${gameName}`.toLowerCase())} checked={paths[gamePathIndex] == String(gameName)} name={id}>
+                {gameNames[Number(key) as Games]}
+            </Tab>
+        })}
+    </NavBarWrapper>
 }
