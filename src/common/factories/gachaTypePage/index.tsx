@@ -16,6 +16,7 @@ import { GSP_NO_RETURNED_VALUE } from "next/dist/lib/constants"
 import PullElement from "@/components/PullElement"
 import PullsWrapperList from "@/components/PullsWrapperList"
 import StatisticsWrapperGrid from "@/components/StatisticsWrapperGrid"
+import NoDataPlaceholder from "@/components/NoDataPlaceholder"
 
 interface GachaTypeFactoryArgs<GachaType extends GenshinGachaType | StarrailGachaType | ZenlessGachaType, RankType extends GenshinRankType | ZenlessRankType | StarrailRankType> extends Omit<MainPageArgs<GachaType, RankType>, "game"> {}
 export default function gachaTypePageFactory<GachaType extends GenshinGachaType | StarrailGachaType | ZenlessGachaType, RankType extends GenshinRankType | ZenlessRankType | StarrailRankType>(args: GachaTypeFactoryArgs<GachaType, RankType>) {
@@ -36,10 +37,10 @@ export default function gachaTypePageFactory<GachaType extends GenshinGachaType 
         }))
         return <>
             <Section label="Stats">
-                {currentBannerStats ? <StatisticsWrapperGrid statistics={currentBannerStats}/> : "No stats"}
+                {currentBannerStats ? <StatisticsWrapperGrid statistics={currentBannerStats}/> : <NoDataPlaceholder/>}
             </Section>
             <Section label="Pulls">
-                {currentBannerPulls ? <PullsWrapperList pulls={currentBannerPulls} rankTypes={args.rankTypes}/> : "No pulls"}
+                {currentBannerPulls ? <PullsWrapperList pulls={currentBannerPulls} rankTypes={args.rankTypes}/> : <NoDataPlaceholder/>}
             </Section>
         </>
     }
