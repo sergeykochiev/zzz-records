@@ -1,6 +1,7 @@
-interface StatEntity {
+import GachaTypeUnion from "@/common/types/GachaTypeUnion"
+interface StatEntity<GachaType extends GachaTypeUnion> {
     uid: string
-    gachaType: number
+    gachaType: GachaType
     currentEpicPity: number
     currentLegendaryPity: number
     nextEpicIsUp: boolean

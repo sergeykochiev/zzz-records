@@ -3,8 +3,8 @@ const nextConfig = {
     async redirects() {
         return [
             {
-                source: "/:g",
-                destination: "/:g/standart",
+                source: "/:g/:u",
+                destination: "/:g/:u/standart",
                 permanent: true
             },
         ]

@@ -1,25 +1,16 @@
 "use client"
-import GenshinGachaType from "@/common/types/dto/Genshin/GachaType"
-import StarrailGachaType from "@/common/types/dto/Starrail/GachaType"
-import ZenlessGachaType from "@/common/types/dto/Zenless/GachaType"
 import TargetGachaTypeEnum from "@/common/types/TargetGachaTypesEnum"
 import { useLiveQuery } from "dexie-react-hooks"
 import { notFound, useParams } from "next/navigation"
 import { MainPageArgs } from "../mainPageFactory"
-import GenshinRankType from "@/common/types/dto/Genshin/RankType"
-import ZenlessRankType from "@/common/types/dto/Zenless/RankType"
-import StarrailRankType from "@/common/types/dto/Starrail/RankType"
 import Section from "@/components/Section"
-import StatEntity from "@/common/database/entities/Stat"
-import StatElement from "@/components/StatElement"
-import { GSP_NO_RETURNED_VALUE } from "next/dist/lib/constants"
-import PullElement from "@/components/PullElement"
 import PullsWrapperList from "@/components/PullsWrapperList"
 import StatisticsWrapperGrid from "@/components/StatisticsWrapperGrid"
 import NoDataPlaceholder from "@/components/NoDataPlaceholder"
-
-interface GachaTypeFactoryArgs<GachaType extends GenshinGachaType | StarrailGachaType | ZenlessGachaType, RankType extends GenshinRankType | ZenlessRankType | StarrailRankType> extends Omit<MainPageArgs<GachaType, RankType>, "game"> {}
-export default function gachaTypePageFactory<GachaType extends GenshinGachaType | StarrailGachaType | ZenlessGachaType, RankType extends GenshinRankType | ZenlessRankType | StarrailRankType>(args: GachaTypeFactoryArgs<GachaType, RankType>) {
+import GachaTypeUnion from "@/common/types/GachaTypeUnion"
+import RankTypeUnion from "@/common/types/RankTypeUnion"
+interface GachaTypeFactoryArgs<GachaType extends GachaTypeUnion, RankType extends RankTypeUnion> extends Pick<MainPageArgs<GachaType, RankType>, "dbInstance" | "gachaTypes" | "rankTypes"> {}
+export default function gachaTypePageFactory<GachaType extends GachaTypeUnion, RankType extends RankTypeUnion>(args: GachaTypeFactoryArgs<GachaType, RankType>) {
     const GachaTypePage = function() {
         const { gachaType } = useParams()
         console.log(gachaType)

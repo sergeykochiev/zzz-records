@@ -1,5 +1,5 @@
 interface GameAccountEntity {
-    id?: number
+    id: number
     uid: string
 }
 export default GameAccountEntity

@@ -1,5 +1,6 @@
 "use client"
 import { GenshinDB } from "@/common/database/Genshin/init";
+import GachaLogApiRouteUrls from "@/common/enum/GachaLogRouteApiUrls";
 import Games from "@/common/enum/Games";
 import mainPageFactory from "@/common/factories/mainPageFactory";
 import GenshinGachaType from "@/common/types/dto/Genshin/GachaType";
@@ -8,6 +9,8 @@ const GenshinMainPage = mainPageFactory({
     game: Games.GENSHIN,
     dbInstance: GenshinDB,
     gachaTypes: GenshinGachaType,
-    rankTypes: GenshinRankType
+    rankTypes: GenshinRankType,
+    gachaTypeField: "gacha_type",
+    apiUrl: GachaLogApiRouteUrls.GENSHIN
 })
 export default GenshinMainPage

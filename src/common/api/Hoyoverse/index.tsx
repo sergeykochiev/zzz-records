@@ -12,28 +12,32 @@ import ZenlessRankType from "@/common/types/dto/Zenless/RankType"
 import GachaLogApiRouteUrls from "@/common/enum/GachaLogRouteApiUrls"
 import HoyoApiError from "@/common/error/HoyoApiError"
 import HoyoResponse from "@/common/types/dto/Hoyoverse/HoyoResponse"
-class HoyoApiClass<GachaType extends GenshinGachaType | StarrailGachaType | ZenlessGachaType> {
-    private params: Partial<HoyoParams> = {
+import GachaTypeUnion from "@/common/types/GachaTypeUnion"
+import RankTypeUnion from "@/common/types/RankTypeUnion"
+import TargetRankTypesEnum from "@/common/types/TargetRankTypesEnum"
+import TargetGachaTypesEnum from "@/common/types/TargetGachaTypesEnum"
+class HoyoApiFetcherClass<GachaType extends GachaTypeUnion, RankType extends RankTypeUnion> {
+    protected params: Partial<HoyoParams> = {
         authkey_ver: 1,
         lang: "en_US",
         size: 20,
     }
-    private helpers = {
+    protected helpers = {
         foundEpicPity: false,
         foundLegendaryPity: false,
         lastEpicIdx: -1,
         lastLegendaryIdx: -1,
     }
-    private stats: (Record<GachaType, StatEntity> | Record<PropertyKey, never>) = {}
-    private pulls: (Record<GachaType, PullEntity[]> | Record<PropertyKey, never>) = {}
+    protected stats: (Record<GachaType, StatEntity<GachaType>> | Record<PropertyKey, never>) = {}
+    protected pulls: (Record<GachaType, PullEntity<GachaType, RankType>[]> | Record<PropertyKey, never>) = {}
     constructor(
         authkey: string,
         lang: string,
         gameBiz: string,
-        private gachaTypeField: "real_gacha_type" | "gacha_type",
-        private rankTypes: Record<keyof typeof GenshinRankType, GenshinRankType | StarrailRankType | ZenlessRankType>,
-        private gachaTypes: Record<keyof typeof GenshinGachaType, GachaType> | Record<keyof typeof ZenlessGachaType, GachaType> | Record<keyof typeof StarrailGachaType, GachaType>,
-        private url: GachaLogApiRouteUrls
+        protected gachaTypeField: "real_gacha_type" | "gacha_type",
+        protected rankTypes: TargetRankTypesEnum<RankType>,
+        protected gachaTypes: TargetGachaTypesEnum<GachaType>,
+        protected url: GachaLogApiRouteUrls
     ) {
         this.params = {
             authkey: authkey,
@@ -41,20 +45,20 @@ class HoyoApiClass<GachaType extends GenshinGachaType | StarrailGachaType | Zenl
             game_biz: gameBiz,
         }
     }
-    getParams() {
+    protected getParams() {
         return this.params
     }
-    getStringifiedParams() {
+    protected getStringifiedParams() {
         const stringified: Partial<CachedUrlParams> = {}
         Object.keys(this.params).forEach(k => {
             stringified[k as keyof Partial<CachedUrlParams>] = '' + this.params[k as keyof Partial<HoyoParams>]
         })
         return stringified
     }
-    getUrl() {
+    protected getUrl() {
         return `${this.url}?${new URLSearchParams(this.getStringifiedParams())}`
     }
-    async checkAuthkey() {
+    protected async checkAuthkey() {
         this.params.size = 1
         const url = this.getUrl()
         const res = await fetch(url)
@@ -65,18 +69,18 @@ class HoyoApiClass<GachaType extends GenshinGachaType | StarrailGachaType | Zenl
         }
         return true
     }
-    handleIncomingPull(pull: HoyoPull) {
+    protected handleIncomingPull(pull: HoyoPull) {
         const currentGachaType = this.params[this.gachaTypeField]! as GachaType
         const currentStat = this.stats[currentGachaType]
         const currentPulls = this.pulls[currentGachaType]
-        const newPull: PullEntity = {
+        const newPull: PullEntity<GachaType, RankType> = {
             uid: pull.uid,
             itemId: pull.item_id,
             gachaType: currentGachaType,
             time: pull.time,
             name: pull.name,
             itemType: pull.item_type,
-            rankType: pull.rank_type,
+            rankType: pull.rank_type as RankType,
             id: pull.id,
             pity: 0
         }
@@ -111,7 +115,8 @@ class HoyoApiClass<GachaType extends GenshinGachaType | StarrailGachaType | Zenl
         }
         return newPull
     }
-    async fetchPulls() {
+    async fetchPulls(): Promise<[Record<GachaType, PullEntity<GachaType, RankType>[]>, Record<GachaType, StatEntity<GachaType>>]> {
+        await this.checkAuthkey()
         this.params.size = 20
         for (let gachatype of Object.values(this.gachaTypes)) {
             this.params[this.gachaTypeField] = gachatype
@@ -121,7 +126,7 @@ class HoyoApiClass<GachaType extends GenshinGachaType | StarrailGachaType | Zenl
         // await db.stats.bulkPut(stats)
         return [this.pulls, this.stats]
     }
-    async fetchBannerRecursive(): Promise<PullEntity[] | void> {
+    protected async fetchBannerRecursive(): Promise<PullEntity<GachaType, RankType>[] | void> {
         const currentGachaType = this.params[this.gachaTypeField]! as GachaType
         const currentStat = this.stats[currentGachaType]
         const currentPulls = this.pulls[currentGachaType]
@@ -153,4 +158,4 @@ class HoyoApiClass<GachaType extends GenshinGachaType | StarrailGachaType | Zenl
         await this.fetchBannerRecursive()
     }
 }
-export default HoyoApiClass
+export default HoyoApiFetcherClass

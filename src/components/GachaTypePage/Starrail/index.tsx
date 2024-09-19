@@ -1,6 +1,6 @@
 "use client"
 import { StarrailDB } from "@/common/database/Starrail/init";
-import gachaTypePageFactory from "@/common/factories/gachaTypePage";
+import gachaTypePageFactory from "@/common/factories/gachaTypePageFactory";
 import StarrailGachaType from "@/common/types/dto/Starrail/GachaType";
 import StarrailRankType from "@/common/types/dto/Starrail/RankType";
 const StarrailGachaTypePage = gachaTypePageFactory({

@@ -1,6 +1,5 @@
 import CachedUrlParams from "@/common/types/CachedUrlParams"
-import minimumNeccesarryParams from "@/common/types/MinimumNessesaryParams"
-interface HoyoParams extends Record<keyof Pick<CachedUrlParams, minimumNeccesarryParams>, string | number> {
+interface HoyoParams {
     authkey_ver: number,
     authkey: string,
     lang: string,
