@@ -1,5 +1,5 @@
 "use client"
-import { InputHTMLAttributes } from "react";
+import { InputHTMLAttributes, MutableRefObject } from "react";
 import GameUniqueComponentProps from "@/common/types/GameUniqueComponentProps";
 import inputClassnameFromKind from "./utility";
 interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "type">, GameUniqueComponentProps {}

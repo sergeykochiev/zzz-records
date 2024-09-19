@@ -18,7 +18,9 @@ export default function MainNavBar({ gamePathSegmentIndex = 1 }: { gamePathSegme
         {Object.keys(Games).map(key => {
             if (!+key) return
             const gameName = Games[key as keyof typeof Games].toString().toLowerCase()
-            return <Tab key={gameName} game={+key as Games} onChange={() => router.push(`/${gameName}`)} checked={paths[gamePathSegmentIndex] == String(gameName)} name={id}>
+            return <Tab key={gameName} game={+key as Games} onChange={() => {
+                router.push(`/${gameName}`)
+            }} checked={paths[gamePathSegmentIndex] == String(gameName)} name={id}>
                 {gameNames[Number(key) as Games]}
             </Tab>
         })}

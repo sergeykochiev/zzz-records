@@ -13,17 +13,16 @@ interface GachaTypeFactoryArgs<GachaType extends GachaTypeUnion, RankType extend
 export default function gachaTypePageFactory<GachaType extends GachaTypeUnion, RankType extends RankTypeUnion>(args: GachaTypeFactoryArgs<GachaType, RankType>) {
     const GachaTypePage = function() {
         const { gachaType } = useParams()
-        console.log(gachaType)
+        const params = useParams()
+        const currentGameAccount = params.gameAccount as string
         const gachaTypeAsAKey = gachaType.toString().toUpperCase()
         if (!Object.keys(args.gachaTypes).includes(gachaTypeAsAKey)) {
             notFound()
         }
-        const uid = "12-3812-83"
         const gachaTypeNumber = args.gachaTypes[gachaTypeAsAKey as keyof TargetGachaTypeEnum<GachaType>]
-        console.log(gachaTypeNumber)
-        const currentBannerPulls = useLiveQuery(() => args.dbInstance.pulls.where(["uid", "gachaType"]).equals([uid, gachaTypeNumber]).reverse().sortBy("time"))
+        const currentBannerPulls = useLiveQuery(() => args.dbInstance.pulls.where(["uid", "gachaType"]).equals([currentGameAccount, gachaTypeNumber]).reverse().sortBy("time"))
         const currentBannerStats = useLiveQuery(() => args.dbInstance.stats.get({
-            uid: uid,
+            uid: currentGameAccount,
             gachaType: gachaTypeNumber
         }))
         return <>

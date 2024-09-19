@@ -11,7 +11,8 @@ export const customColors = {
   "hwh-element-legendary-dark": "#694D39",
   "hwh-epic-dark": "#A166BC",
   "hwh-element-epic-dark": "#50335E",
-  "hwh-body-text-dark": "#898989"
+  "hwh-body-text-dark": "#898989",
+  "hwh-shadow-dark": "#121212"
 }
 const config: Config = {
   content: [

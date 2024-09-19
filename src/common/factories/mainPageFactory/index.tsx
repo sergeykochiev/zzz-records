@@ -13,9 +13,9 @@ import { useLiveQuery } from "dexie-react-hooks";
 import GachaTypeUnion from "@/common/types/GachaTypeUnion";
 import RankTypeUnion from "@/common/types/RankTypeUnion";
 import TargetRankTypesEnum from "@/common/types/TargetRankTypesEnum";
-import HoyoApiFetcherClass from "@/common/api/Hoyoverse";
 import HoyoCachedUrlHandler from "@/common/HoyoCachedUrlHandler";
 import GachaLogApiRouteUrls from "@/common/enum/GachaLogRouteApiUrls";
+import HoyoApiClass from "@/common/api/Hoyoverse";
 export interface MainPageArgs<GachaType extends GachaTypeUnion, RankType extends RankTypeUnion> {
     game: Games
     dbInstance: Dexie & {
@@ -29,36 +29,57 @@ export interface MainPageArgs<GachaType extends GachaTypeUnion, RankType extends
     apiUrl: GachaLogApiRouteUrls
 }
 export default function mainPageFactory<GachaType extends GachaTypeUnion, RankType extends RankTypeUnion>(args: MainPageArgs<GachaType, RankType>) {
+    const urlInputName = "url"
     const MainPage = function({ children }: { children: React.ReactNode }) {
-        const [input, setInput] = useState<string>("")
         const gameAccounts = useLiveQuery(() => args.dbInstance.gameaccs.toArray())
+        const [input, setInput] = useState<string>("")
         const fetchAndSavePulls = async () => {
-            const cachedUrlHandler = new HoyoCachedUrlHandler(input)
+            // e.preventDefault()
+            // const url = (new FormData(e.target as HTMLFormElement)).get(urlInputName)
+            // if (!url) return
+            const url = input
+            const cachedUrlHandler = new HoyoCachedUrlHandler(url as string)
             const params = cachedUrlHandler.parseCachedUrlParams()
-            const apiFetcher = new HoyoApiFetcherClass(
+            const hoyoApi = new HoyoApiClass(
+                console.log,
                 params.authkey,
-                params.lang,
+                "en",
                 params.gameBiz,
                 args.gachaTypeField,
                 args.rankTypes,
                 args.gachaTypes,
                 args.apiUrl
             )
-            const [pulls, stats] = await apiFetcher.fetchPulls()
-            for (let gachatype in pulls) {
-                await args.dbInstance.pulls.bulkAdd(pulls[gachatype])
-                await args.dbInstance.stats.add(stats[gachatype])
+            try {
+                const uid = await hoyoApi.getUid()
+                if (!uid) {
+                    console.log("Seems you didnt pull yet")
+                    return
+                }
+                const [pulls, stats] = await hoyoApi.fetchPullsAndCalculateStats()
+                for (let gachatype of Object.keys(pulls)) {
+                    await args.dbInstance.gameaccs.add({
+                        uid: uid
+                    })
+                    console.log(gachatype)
+                    await args.dbInstance.pulls.bulkAdd(pulls[Number(gachatype) as GachaType])
+                    await args.dbInstance.stats.add(stats[Number(gachatype) as GachaType])
+                }
+            } catch(e) {
+                alert((e as Error).message)
             }
         }
         return <>
-            <div className="grid grid-cols-2 w-full gap-[16px]">
+            <div className="flex">
                 <Section label="Fetch pulls">
                     <div className="flex gap-[8px]">
-                        <Input game={args.game} value={input} onChange={e => setInput(e.target.value)} placeholder="URL from cache..." name="authkey"/>
+                        <Input value={input} onChange={e => setInput(e.target.value)} game={args.game} placeholder="URL from cache..." name={urlInputName}/>
                         <Button game={args.game} onClick={fetchAndSavePulls}>Fetch</Button>
                     </div>
                 </Section>
-                <GameAccountSelect gameAccounts={gameAccounts}/>
+                <Section label="Choose an account">
+                    <GameAccountSelect gameAccounts={gameAccounts}/>
+                </Section>
             </div>
             {children}
         </>

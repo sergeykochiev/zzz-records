@@ -11,10 +11,13 @@ export default function GameAccountSelect({ gameAccounts, gameAccountPathSegment
     const paths = pathname.split("/")
     const router = useRouter()
     const params = useParams()
+    const currentGameAccount = params.gameAccount as string
     const getNewRoute = (gameAccount: string) => `${paths.slice(0,gameAccountPathSegmentIndex).join("/")}/${gameAccount}/${paths.slice(gameAccountPathSegmentIndex+1).join("/")}`
-    return <SelectField placeholder="Choose game account uid..." defaultValue="">
+    return <SelectField placeholder="Choose game account uid..." defaultValue={currentGameAccount}>
         {(gameAccounts && gameAccounts.length) ? gameAccounts.map(gameAccount => {
-            return <OptionElement name="game-account-selector" onChange={() => router.push(getNewRoute(gameAccount.id.toString()))} checked={params.gameAccount as string == gameAccount.id.toString()}>
+            return <OptionElement key={gameAccount.id} name="game-account-selector" onChange={() => {
+                router.push(getNewRoute(gameAccount.uid))
+            }} checked={currentGameAccount == gameAccount.uid}>
                 {gameAccount.uid}
             </OptionElement>
         }) : <NoDataPlaceholder message="No game account found. Perhaps you accidentally deleted your data or never fetched it in the first place?"/>}
