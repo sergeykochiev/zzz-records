@@ -75,7 +75,7 @@ export default function mainPageFactory<GachaType extends GachaTypeUnion, RankTy
                         <Input value={input} onChange={e => setInput(e.target.value)} game={args.game} placeholder="URL from cache..." name={urlInputName}/>
                         <Button game={args.game} onClick={fetchAndSavePulls}>Fetch</Button>
                     </div>
-                    <div ref={loggerElementRef}></div>
+                    <div className="text-hwh-body-text-dark" ref={loggerElementRef}></div>
                 </Section>
                 <Section label="Choose an account">
                     <GameAccountSelect gameAccounts={gameAccounts}/>
