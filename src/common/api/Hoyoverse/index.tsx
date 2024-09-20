@@ -13,7 +13,6 @@ import GachaTypeUnion from "@/common/types/GachaTypeUnion"
 import RankTypeUnion from "@/common/types/RankTypeUnion"
 import TargetRankTypesEnum from "@/common/types/TargetRankTypesEnum"
 import TargetGachaTypesEnum from "@/common/types/TargetGachaTypesEnum"
-import { M_PLUS_1 } from "next/font/google"
 import sleep from "@/common/functions/sleep"
 type Helpers = {
     foundEpicPity: boolean,
@@ -40,8 +39,7 @@ class HoyoApiClass<GachaType extends GachaTypeUnion, RankType extends RankTypeUn
         protected gachaTypeField: "real_gacha_type" | "gacha_type",
         protected rankTypes: TargetRankTypesEnum<RankType>,
         protected gachaTypes: TargetGachaTypesEnum<GachaType>,
-        protected url: GachaLogApiRouteUrls,
-        endId?: string
+        protected url: GachaLogApiRouteUrls
     ) {
         this.params = {
             ...this.params,
@@ -142,15 +140,16 @@ class HoyoApiClass<GachaType extends GachaTypeUnion, RankType extends RankTypeUn
         }
         this.pulls[currentGachaType].push(newPull)
     }
-    async fetchPullsAndCalculateStats(): Promise<[Record<GachaType, PullEntity<GachaType, RankType>[]>, Record<GachaType, StatEntity<GachaType>>]> {
+    async fetchPullsAndCalculateStats(endIds: Record<GachaType, string>): Promise<[Record<GachaType, PullEntity<GachaType, RankType>[]>, Record<GachaType, StatEntity<GachaType>>]> {
         await this.checkAuthkey()
         this.params.size = 20
         for (let key of Object.keys(this.gachaTypes)) {
             if (!+key) continue
-            this.params[this.gachaTypeField] = Number(key) as GachaType
-            this.stats[Number(key) as GachaType] = {
+            this.params[this.gachaTypeField] = +key as GachaType
+            this.params.end_id = endIds[+key as GachaType]
+            this.stats[+key as GachaType] = {
                 uid: "",
-                gachaType: Number(key),
+                gachaType: +key,
                 currentEpicPity: 0,
                 currentLegendaryPity: 0,
                 nextEpicIsUp: false,
@@ -161,7 +160,7 @@ class HoyoApiClass<GachaType extends GachaTypeUnion, RankType extends RankTypeUn
                 avgLegendaryPity: 0,
                 count: 0
             } as StatEntity<GachaType>
-            this.pulls[Number(key) as GachaType] = [] as PullEntity<GachaType, RankType>[]
+            this.pulls[+key as GachaType] = [] as PullEntity<GachaType, RankType>[]
             await this.fetchBannerRecursive()
             this.loggerFunction(`Finished fetching ${this.gachaTypes[Number(key) as keyof (typeof GenshinGachaType | StarrailGachaType | ZenlessGachaType)]} banner`)
         }

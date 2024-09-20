@@ -1,5 +1,4 @@
 import { MutableRefObject } from "react"
-
 export default function clickAnimationFactory(ref: MutableRefObject<HTMLElement | null>, scale: number = 0.95, duration: number = 100): [() => void, () => void] {
     return [
         function onMouseDownAnimation() {

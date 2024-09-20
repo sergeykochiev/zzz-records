@@ -1,11 +1,7 @@
-import GameAccountEntity from "@/common/database/entities/GameAccount";
-import PullEntity from "@/common/database/entities/Pull";
 import Games from "@/common/enum/Games";
-import Dexie, { EntityTable } from "dexie";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Input from "../../../components/Input";
 import Button from "../../../components/Button";
-import StatEntity from "@/common/database/entities/Stat";
 import TargetGachaTypeEnum from "@/common/types/TargetGachaTypesEnum";
 import Section from "@/components/Section";
 import GameAccountSelect from "@/components/GameAccountSelect";
@@ -16,13 +12,12 @@ import TargetRankTypesEnum from "@/common/types/TargetRankTypesEnum";
 import HoyoCachedUrlHandler from "@/common/HoyoCachedUrlHandler";
 import GachaLogApiRouteUrls from "@/common/enum/GachaLogRouteApiUrls";
 import HoyoApiClass from "@/common/api/Hoyoverse";
+import DexieDBHelperClass from "@/common/database/DexieDBHelperClass";
+import TargetDexieDBInstance from "@/common/types/TargetDexieDBInstance";
+import ElementLogger from "../ElementLogger";
 export interface MainPageArgs<GachaType extends GachaTypeUnion, RankType extends RankTypeUnion> {
     game: Games
-    dbInstance: Dexie & {
-        pulls: EntityTable<PullEntity<GachaType, RankType>, "id">
-        gameaccs: EntityTable<GameAccountEntity, "id">;
-        stats: EntityTable<StatEntity<GachaType>>
-    }
+    dbInstance: TargetDexieDBInstance<GachaType, RankType>
     gachaTypes: TargetGachaTypeEnum<GachaType>,
     rankTypes: TargetRankTypesEnum<RankType>
     gachaTypeField: "real_gacha_type" | "gacha_type",
@@ -31,7 +26,9 @@ export interface MainPageArgs<GachaType extends GachaTypeUnion, RankType extends
 export default function mainPageFactory<GachaType extends GachaTypeUnion, RankType extends RankTypeUnion>(args: MainPageArgs<GachaType, RankType>) {
     const urlInputName = "url"
     const MainPage = function({ children }: { children: React.ReactNode }) {
-        const gameAccounts = useLiveQuery(() => args.dbInstance.gameaccs.toArray())
+        const dbHelper = new DexieDBHelperClass(args.dbInstance, args.gachaTypes)
+        const gameAccounts = useLiveQuery(() => dbHelper.syncGetAllGameAccounts())
+        const loggerElementRef = useRef<HTMLDivElement | null>(null)
         const [input, setInput] = useState<string>("")
         const fetchAndSavePulls = async () => {
             // e.preventDefault()
@@ -41,14 +38,14 @@ export default function mainPageFactory<GachaType extends GachaTypeUnion, RankTy
             const cachedUrlHandler = new HoyoCachedUrlHandler(url as string)
             const params = cachedUrlHandler.parseCachedUrlParams()
             const hoyoApi = new HoyoApiClass(
-                console.log,
+                ElementLogger(loggerElementRef),
                 params.authkey,
                 "en",
                 params.gameBiz,
                 args.gachaTypeField,
                 args.rankTypes,
                 args.gachaTypes,
-                args.apiUrl
+                args.apiUrl,
             )
             try {
                 const uid = await hoyoApi.getUid()
@@ -56,14 +53,16 @@ export default function mainPageFactory<GachaType extends GachaTypeUnion, RankTy
                     console.log("Seems you didnt pull yet")
                     return
                 }
-                const [pulls, stats] = await hoyoApi.fetchPullsAndCalculateStats()
-                for (let gachatype of Object.keys(pulls)) {
-                    await args.dbInstance.gameaccs.add({
-                        uid: uid
-                    })
-                    console.log(gachatype)
-                    await args.dbInstance.pulls.bulkAdd(pulls[Number(gachatype) as GachaType])
-                    await args.dbInstance.stats.add(stats[Number(gachatype) as GachaType])
+                const endIds = await dbHelper.getEndIds(uid)
+                const [pulls, stats] = await hoyoApi.fetchPullsAndCalculateStats(endIds)
+                await dbHelper.saveGameAccount({
+                    uid: uid,
+                    region: params.gameBiz,
+                    name: "Account"
+                })
+                for (let key of Object.keys(pulls)) {
+                    await dbHelper.saveManyPulls(pulls[+key as GachaType])
+                    await dbHelper.saveStat(stats[+key as GachaType])
                 }
             } catch(e) {
                 alert((e as Error).message)
@@ -76,6 +75,7 @@ export default function mainPageFactory<GachaType extends GachaTypeUnion, RankTy
                         <Input value={input} onChange={e => setInput(e.target.value)} game={args.game} placeholder="URL from cache..." name={urlInputName}/>
                         <Button game={args.game} onClick={fetchAndSavePulls}>Fetch</Button>
                     </div>
+                    <div ref={loggerElementRef}></div>
                 </Section>
                 <Section label="Choose an account">
                     <GameAccountSelect gameAccounts={gameAccounts}/>

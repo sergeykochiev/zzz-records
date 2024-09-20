@@ -5,7 +5,7 @@ import STORES from "../../stores";
 import GenshinStatEntity from "../Stat";
 export const GenshinDB = new Dexie("hwh-genshin-db") as Dexie & {
     pulls: EntityTable<GenshinPullEntity, 'id'>,
-    gameaccs: EntityTable<GameAccountEntity, 'id'>,
+    gameaccs: EntityTable<GameAccountEntity, 'uid'>,
     stats: EntityTable<GenshinStatEntity>
 }
 GenshinDB.version(1).stores(STORES)

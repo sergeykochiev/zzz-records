@@ -1,5 +1,6 @@
 interface GameAccountEntity {
-    id: number
-    uid: string
+    uid: string,
+    region: string,
+    name: string
 }
 export default GameAccountEntity
