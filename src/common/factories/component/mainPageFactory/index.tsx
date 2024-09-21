@@ -1,7 +1,7 @@
 import Games from "@/common/enum/Games";
 import { useRef, useState } from "react";
-import Input from "../../../components/Input";
-import Button from "../../../components/Button";
+import Input from "../../../../components/Input";
+import Button from "../../../../components/Button";
 import TargetGachaTypeEnum from "@/common/types/TargetGachaTypesEnum";
 import Section from "@/components/Section";
 import GameAccountSelect from "@/components/GameAccountSelect";
@@ -14,7 +14,7 @@ import GachaLogApiRouteUrls from "@/common/enum/GachaLogRouteApiUrls";
 import HoyoApiClass from "@/common/api/Hoyoverse";
 import DexieDBHelperClass from "@/common/database/DexieDBHelperClass";
 import TargetDexieDBInstance from "@/common/types/TargetDexieDBInstance";
-import ElementLogger from "../ElementLogger";
+import ElementLogger from "../../function/ElementLogger";
 export interface MainPageArgs<GachaType extends GachaTypeUnion, RankType extends RankTypeUnion> {
     game: Games
     dbInstance: TargetDexieDBInstance<GachaType, RankType>

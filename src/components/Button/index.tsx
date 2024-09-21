@@ -1,5 +1,5 @@
 "use client"
-import clickAnimationFactory from "@/common/factories/clickAnimationFactory"
+import clickAnimationFactory from "@/common/factories/function/clickAnimationFactory"
 import GameUniqueComponentProps from "@/common/types/GameUniqueComponentProps"
 import { ButtonHTMLAttributes, useRef } from "react"
 import buttonClassnameFromKind from "./utility"

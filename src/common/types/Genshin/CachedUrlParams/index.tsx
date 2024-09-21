@@ -1,5 +1,5 @@
 import CachedUrlParams from "../../CachedUrlParams"
-import GenshinGachaType from "../../dto/Genshin/GachaType"
+import GenshinGachaType from "../GachaType"
 interface GenshinCachedUrlParams extends CachedUrlParams {
     init_type: `${GenshinGachaType}`
     device_type: string

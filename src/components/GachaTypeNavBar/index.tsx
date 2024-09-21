@@ -1,7 +1,7 @@
-import GenshinGachaType from "@/common/types/dto/Genshin/GachaType";
+import GenshinGachaType from "@/common/types/Genshin/GachaType";
 import NavBarWrapper from "../NavBarWrapper";
-import StarrailGachaType from "@/common/types/dto/Starrail/GachaType";
-import ZenlessGachaType from "@/common/types/dto/Zenless/GachaType";
+import StarrailGachaType from "@/common/types/Starrail/GachaType";
+import ZenlessGachaType from "@/common/types/Zenless/GachaType";
 import TargetGachaTypeEnum from "@/common/types/TargetGachaTypesEnum";
 import Tab from "../Tab";
 import { usePathname, useRouter } from "next/navigation";

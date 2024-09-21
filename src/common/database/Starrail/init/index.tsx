@@ -1,11 +1,14 @@
 import Dexie, { EntityTable } from "dexie";
 import GameAccountEntity from "../../entities/GameAccount";
 import STORES from "../../stores";
-import StarrailPullEntity from "../Pull";
-import StarrailStatEntity from "../Stat";
+import StarrailGachaType from "@/common/types/Starrail/GachaType";
+import PullEntity from "../../entities/Pull";
+import StatEntity from "../../entities/Stat";
+import StarrailItemType from "@/common/types/Starrail/ItemType";
+import StarrailRankType from "@/common/types/Starrail/RankType";
 export const StarrailDB = new Dexie("hwh-starrail-db") as Dexie & {
-    pulls: EntityTable<StarrailPullEntity, 'id'>,
+    pulls: EntityTable<PullEntity<StarrailItemType, StarrailGachaType, StarrailRankType>, 'id'>,
     gameaccs: EntityTable<GameAccountEntity, 'uid'>,
-    stats: EntityTable<StarrailStatEntity>
+    stats: EntityTable<StatEntity<StarrailGachaType>>
 }
 StarrailDB.version(1).stores(STORES)

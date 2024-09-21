@@ -1,5 +1,5 @@
 import CachedUrlParams from "../../CachedUrlParams"
-import StarrailGachaType from "../../dto/Starrail/GachaType"
+import StarrailGachaType from "../GachaType"
 interface StarrailCachedUrlParams extends CachedUrlParams {
     default_gacha_type: `${StarrailGachaType}`
     plat_type: string

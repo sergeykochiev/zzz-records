@@ -1,5 +1,5 @@
 import CachedUrlParams from "../../CachedUrlParams"
-import ZenlessGachaType from "../../dto/Zenless/GachaType"
+import ZenlessGachaType from "../GachaType"
 interface ZenlessCachedUrlParams extends CachedUrlParams {
     init_log_gacha_type: `${ZenlessGachaType}`
     init_log_gacha_base_type: `${ZenlessGachaType}`

@@ -1,6 +1,6 @@
 "use client"
-import gachaTypeNavBarLayoutFactory from "@/common/factories/gachaTypeNavBarLayout";
-import ZenlessGachaType from "@/common/types/dto/Zenless/GachaType";
+import gachaTypeNavBarLayoutFactory from "@/common/factories/component/gachaTypeNavBarLayout";
+import ZenlessGachaType from "@/common/types/Zenless/GachaType";
 const ZenlessGachaTypeNavBarLayout = gachaTypeNavBarLayoutFactory({
     gachaTypes: ZenlessGachaType
 })

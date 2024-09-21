@@ -2,9 +2,9 @@
 import { ZenlessDB } from "@/common/database/Zenless/init";
 import GachaLogApiRouteUrls from "@/common/enum/GachaLogRouteApiUrls";
 import Games from "@/common/enum/Games";
-import mainPageFactory from "@/common/factories/mainPageFactory";
-import ZenlessGachaType from "@/common/types/dto/Zenless/GachaType";
-import ZenlessRankType from "@/common/types/dto/Zenless/RankType";
+import mainPageFactory from "@/common/factories/component/mainPageFactory";
+import ZenlessGachaType from "@/common/types/Zenless/GachaType";
+import ZenlessRankType from "@/common/types/Zenless/RankType";
 const ZenlessMainPage = mainPageFactory({
     game: Games.ZENLESS,
     dbInstance: ZenlessDB,

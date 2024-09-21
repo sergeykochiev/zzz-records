@@ -1,6 +1,7 @@
 import GachaTypeUnion from "@/common/types/GachaTypeUnion"
+import ItemTypeUnion from "@/common/types/ItemTypeUnion"
 import RankTypeUnion from "@/common/types/RankTypeUnion"
-interface PullEntity<GachaType extends GachaTypeUnion, RankType extends RankTypeUnion> {
+interface PullEntity<ItemType extends ItemTypeUnion, GachaType extends GachaTypeUnion, RankType extends RankTypeUnion> {
     uid: string,
     itemId: string
     time: string
@@ -9,6 +10,6 @@ interface PullEntity<GachaType extends GachaTypeUnion, RankType extends RankType
     pity: number
     gachaType: GachaType
     rankType: RankType
-    itemType: string
+    itemType: ItemType
 }
 export default PullEntity

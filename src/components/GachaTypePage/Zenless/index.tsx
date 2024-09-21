@@ -1,8 +1,8 @@
 "use client"
 import { ZenlessDB } from "@/common/database/Zenless/init";
-import gachaTypePageFactory from "@/common/factories/gachaTypePageFactory";
-import ZenlessGachaType from "@/common/types/dto/Zenless/GachaType";
-import ZenlessRankType from "@/common/types/dto/Zenless/RankType";
+import gachaTypePageFactory from "@/common/factories/component/gachaTypePageFactory";
+import ZenlessGachaType from "@/common/types/Zenless/GachaType";
+import ZenlessRankType from "@/common/types/Zenless/RankType";
 const ZenlessGachaTypePage = gachaTypePageFactory({
     dbInstance: ZenlessDB,
     gachaTypes: ZenlessGachaType,

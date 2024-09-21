@@ -1,6 +1,6 @@
 "use client"
-import gachaTypeNavBarLayoutFactory from "@/common/factories/gachaTypeNavBarLayout";
-import StarrailGachaType from "@/common/types/dto/Starrail/GachaType";
+import gachaTypeNavBarLayoutFactory from "@/common/factories/component/gachaTypeNavBarLayout";
+import StarrailGachaType from "@/common/types/Starrail/GachaType";
 const StarrailGachaTypeNavBarLayout = gachaTypeNavBarLayoutFactory({
     gachaTypes: StarrailGachaType
 })

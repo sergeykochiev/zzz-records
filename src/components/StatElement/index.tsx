@@ -1,5 +1,5 @@
 import StatEntity from "@/common/database/entities/Stat"
-import GenshinRankType from "@/common/types/dto/Genshin/RankType"
+import GenshinRankType from "@/common/types/Genshin/RankType"
 import { StatsToDisplay } from "../StatisticsWrapperGrid"
 interface StatElementProps {
     label: string
