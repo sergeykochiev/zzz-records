@@ -8,6 +8,7 @@ import GenshinRankType from "@/common/types/Genshin/RankType";
 const GenshinMainPage = mainPageFactory({
     game: Games.GENSHIN,
     dbInstance: GenshinDB,
+    gachaTypes: GenshinGachaType,
     rankTypes: GenshinRankType,
     gachaTypeField: "gacha_type",
     apiUrl: GachaLogApiRouteUrls.GENSHIN
