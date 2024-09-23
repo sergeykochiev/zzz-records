@@ -1,4 +1,5 @@
-const GachaLogEndpoint = {
+import ApiEndpointsMapType from "@/common/types/ApiEndpointsMap"
+const GachaLogEndpoint: ApiEndpointsMapType = {
     1: "gacha_info/api/getGachaLog",
     2: "common/gacha_record/api/getGachaLog",
     3: "common/gacha_record/api/getGachaLog"
