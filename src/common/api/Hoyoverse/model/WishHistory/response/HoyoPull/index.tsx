@@ -1,7 +1,7 @@
 import GachaTypeUnion from "@/common/types/GachaTypeUnion"
 import ItemTypeUnion from "@/common/types/ItemTypeUnion"
 import RankTypeUnion from "@/common/types/RankTypeUnion"
-interface HoyoPull<ItemType extends ItemTypeUnion, GachaType extends GachaTypeUnion, RankType extends RankTypeUnion> {
+interface HoyoWishHistoryPull<ItemType extends ItemTypeUnion, GachaType extends GachaTypeUnion, RankType extends RankTypeUnion> {
     uid: string
     gacha_id: string
     item_id: string
@@ -14,4 +14,4 @@ interface HoyoPull<ItemType extends ItemTypeUnion, GachaType extends GachaTypeUn
     rank_type: `${RankType}`
     gacha_type: `${GachaType}`
 }
-export default HoyoPull
+export default HoyoWishHistoryPull

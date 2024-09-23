@@ -5,24 +5,25 @@ import RankTypeUnion from "@/common/types/RankTypeUnion";
 import GameAccountEntity from "../entities/GameAccount";
 import StatEntity from "../entities/Stat";
 import TargetGachaTypesEnum from "@/common/types/TargetGachaTypesEnum";
+import ItemTypeUnion from "@/common/types/ItemTypeUnion";
 type GetPullsDto<GachaType extends GachaTypeUnion> = {
     uid: string,
     gachaType: GachaType
 }
 type GetStatsDto<GachaType extends GachaTypeUnion> = GetPullsDto<GachaType>
-class DexieDBHelperClass<GachaType extends GachaTypeUnion, RankType extends RankTypeUnion> {
+class DexieDBHelperClass<ItemType extends ItemTypeUnion, GachaType extends GachaTypeUnion, RankType extends RankTypeUnion> {
     constructor(
         private dbInstance: Dexie & {
-            pulls: EntityTable<PullEntity<GachaType, RankType>, "id">
+            pulls: EntityTable<PullEntity<ItemType, GachaType, RankType>, "id">
             gameaccs: EntityTable<GameAccountEntity, "uid">;
             stats: EntityTable<StatEntity<GachaType>>
         },
         private gachaTypes: TargetGachaTypesEnum<GachaType>
     ) {}
-    async getPullsByUidAndGachaType(dto: GetPullsDto<GachaType>): Promise<PullEntity<GachaType, RankType>[]> {
+    async getPullsByUidAndGachaType(dto: GetPullsDto<GachaType>): Promise<PullEntity<ItemType, GachaType, RankType>[]> {
         return await this.syncGetPullsByUidAndGachaType(dto)
     }
-    syncGetPullsByUidAndGachaType(dto: GetPullsDto<GachaType>): PromiseExtended<PullEntity<GachaType, RankType>[]> {
+    syncGetPullsByUidAndGachaType(dto: GetPullsDto<GachaType>): PromiseExtended<PullEntity<ItemType, GachaType, RankType>[]> {
         return this.getPullsCollection(dto).reverse().sortBy("time")
     }
     getPullsCollection(dto: GetPullsDto<GachaType>) {
@@ -37,7 +38,7 @@ class DexieDBHelperClass<GachaType extends GachaTypeUnion, RankType extends Rank
             gachaType: dto.gachaType
         })
     }
-    async saveManyPulls(pulls: PullEntity<GachaType, RankType>[]) {
+    async saveManyPulls(pulls: PullEntity<ItemType, GachaType, RankType>[]) {
         await this.dbInstance.pulls.bulkAdd(pulls)
     }
     async saveStat(stat: StatEntity<GachaType>) {

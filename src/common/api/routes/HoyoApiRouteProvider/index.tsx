@@ -2,11 +2,7 @@ import Games from "../../../enum/Games";
 import BasePublicOperationUrl from "../base/PublicOperation";
 import ChinaBannerListEndpoint from "../endpoints/ChinaBannerList";
 import GachaLogEndpoint from "../endpoints/GachaLog";
-export interface HoyoApiRouteProviderType {
-    GACHA_LOG_URL: string
-    CN_GACHA_LIST_URL: string
-}
-class HoyoApiRouteProvider implements HoyoApiRouteProviderType {
+class HoyoApiRouteProvider {
     public GACHA_LOG_URL: string
     public CN_GACHA_LIST_URL: string
     constructor(

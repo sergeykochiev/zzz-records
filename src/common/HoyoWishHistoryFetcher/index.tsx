@@ -1,8 +1,7 @@
 import CachedUrlParams from "@/common/types/CachedUrlParams"
-import HoyoParams from "../Params"
 import PullEntity from "@/common/database/entities/Pull"
 import StatEntity from "@/common/database/entities/Stat"
-import HoyoPull from "@/common/types/Hoyoverse/HoyoPull"
+import HoyoPull from "@/common/api/Hoyoverse/model/WishHistory/response/HoyoPull"
 import GenshinGachaType from "@/common/types/Genshin/GachaType"
 import ZenlessGachaType from "@/common/types/Zenless/GachaType"
 import StarrailGachaType from "@/common/types/Starrail/GachaType"
@@ -14,16 +13,16 @@ import TargetRankTypesEnum from "@/common/types/TargetRankTypesEnum"
 import TargetGachaTypesEnum from "@/common/types/TargetGachaTypesEnum"
 import sleep from "@/common/functions/sleep"
 import ItemTypeUnion from "@/common/types/ItemTypeUnion"
-import HoyoResponse from "@/common/types/Hoyoverse/HoyoResponse"
-import { HoyoApiRouteProviderType } from "../../routes/HoyoApiRouteProvider"
+import HoyoApi from "../api/Hoyoverse/HoyoApi"
+import HoyoWishHistoryParams from "../api/Hoyoverse/model/WishHistory/params"
 type Helpers = {
     foundEpicPity: boolean,
     foundLegendaryPity: boolean,
     lastEpicIdx: number,
     lastLegendaryIdx: number,
 }
-class HoyoApiFetcher<ItemType extends ItemTypeUnion, GachaType extends GachaTypeUnion, RankType extends RankTypeUnion> {
-    protected params: Partial<HoyoParams> = {
+class HoyoWishHistoryFetcher<ItemType extends ItemTypeUnion, GachaType extends GachaTypeUnion, RankType extends RankTypeUnion> {
+    protected params: Partial<HoyoWishHistoryParams<GachaType>> = {
         authkey_ver: 1,
         sign_type: 2,
         lang: "en-us",
@@ -41,7 +40,7 @@ class HoyoApiFetcher<ItemType extends ItemTypeUnion, GachaType extends GachaType
         protected gachaTypeField: "real_gacha_type" | "gacha_type",
         protected rankTypes: TargetRankTypesEnum<RankType>,
         protected gachaTypes: TargetGachaTypesEnum<GachaType>,
-        protected apiRouteProvider: HoyoApiRouteProviderType
+        protected api: HoyoApi<ItemType, GachaType, RankType>
     ) {
         this.params = {
             ...this.params,
@@ -55,16 +54,13 @@ class HoyoApiFetcher<ItemType extends ItemTypeUnion, GachaType extends GachaType
     }
     protected async getSampleDataProbe() {
         this.params.size = 1
-        const responses: HoyoResponse<ItemType, GachaType, RankType>[] = []
+        const responses = []
         for (let key of Object.keys(this.gachaTypes)) {
             if (!+key) continue
             this.params[this.gachaTypeField] = Number(key) as GachaType
-            const url = this.getGachaLogUrl()
-            const res = await fetch(url)
-            if (!res.ok) throw Error("Fetch error")
-            const json: HoyoResponse<ItemType, GachaType, RankType> = await res.json()
-            if (json.retcode != 0) throw new HoyoApiError(json.retcode, json.message)
-            responses.push(json)
+            const res = await this.api.getWishHistory(this.getStringifiedParams(this.params))
+            if (res.retcode != 0) throw new HoyoApiError(res.retcode, res.message)
+            responses.push(res.data.list)
             await sleep(this.defaultApiDelay)
         }
         return responses
@@ -72,31 +68,23 @@ class HoyoApiFetcher<ItemType extends ItemTypeUnion, GachaType extends GachaType
     async getUid(): Promise<string | undefined> {
         const sampleResponses = await this.getSampleDataProbe()
         for (let i = 0; i < sampleResponses.length; i++) {
-            const pullsList = sampleResponses[i].data.list
+            const pullsList = sampleResponses[i]
             if (pullsList.length > 0) return pullsList[0].uid
         }
         return
     }
-    protected getStringifiedParams() {
-        const stringified: Partial<CachedUrlParams> = {}
-        Object.keys(this.params).forEach(k => {
-            stringified[k as keyof Partial<CachedUrlParams>] = '' + this.params[k as keyof Partial<HoyoParams>]
+    protected getStringifiedParams<R extends Record<PropertyKey, number | string>>(params: R): Record<keyof R, string> {
+        const stringified: Record<keyof R, string> = {} as Record<keyof R, string>
+        Object.keys(params).forEach(k => {
+            stringified[k as keyof R] = '' + params[k as keyof R]
         })
         return stringified
     }
-    protected getGachaLogUrl() {
-        return `${this.apiRouteProvider.GACHA_LOG_URL}?${new URLSearchParams(this.getStringifiedParams())}`
-    }
     protected async checkAuthkey() {
         this.params.size = 1
-        const url = this.getGachaLogUrl()
-        const res = await fetch(url)
-        if (!res.ok) throw Error("Fetch error")
-        const jsonRes: HoyoResponse<ItemType, GachaType, RankType> = await res.json()
-        if (jsonRes.retcode != 0) {
-            throw new HoyoApiError(jsonRes.retcode, jsonRes.message)
-        }
-        return true
+        const res = await this.api.getWishHistory(this.getStringifiedParams(this.params))
+        if (res.retcode == 0) return true
+        return false
     }
     protected handleIncomingPull(pull: HoyoPull<ItemType, GachaType, RankType>, helpers: Helpers) {
         const currentGachaType = this.params[this.gachaTypeField] as GachaType
@@ -174,17 +162,11 @@ class HoyoApiFetcher<ItemType extends ItemTypeUnion, GachaType extends GachaType
         lastLegendaryIdx: -1,
     }): Promise<PullEntity<ItemType, GachaType, RankType>[] | void> {
         const currentGachaType = this.params[this.gachaTypeField] as GachaType
-        const url = this.getGachaLogUrl()
-        const res = await fetch(url)
-        if (!res.ok) {
-            this.loggerFunction(`fetch error ${res.status}: ${res.statusText}`)
-            return
+        const res = await this.api.getWishHistory(this.getStringifiedParams(this.params))
+        if (res.retcode != 0) {
+            throw new HoyoApiError(res.retcode, res.message)
         }
-        const json: HoyoResponse<ItemType, GachaType, RankType> = await res.json()
-        if (json.retcode != 0) {
-            throw new HoyoApiError(json.retcode, json.message)
-        }
-        if (json.data.list.length == 0) {
+        if (res.data.list.length == 0) {
             this.params.end_id = ""
             if (helpers.lastEpicIdx >= 0) this.stats[currentGachaType].avgEpicPity += this.pulls[currentGachaType][helpers.lastEpicIdx].pity
             if (helpers.lastLegendaryIdx >= 0) this.stats[currentGachaType].avgLegendaryPity += this.pulls[currentGachaType][helpers.lastLegendaryIdx].pity
@@ -192,7 +174,7 @@ class HoyoApiFetcher<ItemType extends ItemTypeUnion, GachaType extends GachaType
             this.stats[currentGachaType].avgLegendaryPity /= this.stats[currentGachaType].countLegendary
             return
         }
-        for (const pull of json.data.list) {
+        for (const pull of res.data.list) {
             this.handleIncomingPull(pull, helpers)
         }
         this.params.end_id = this.pulls[currentGachaType][this.pulls[currentGachaType].length - 1].id
@@ -201,4 +183,4 @@ class HoyoApiFetcher<ItemType extends ItemTypeUnion, GachaType extends GachaType
         await this.fetchBannerRecursive(helpers)
     }
 }
-export default HoyoApiFetcher
+export default HoyoWishHistoryFetcher

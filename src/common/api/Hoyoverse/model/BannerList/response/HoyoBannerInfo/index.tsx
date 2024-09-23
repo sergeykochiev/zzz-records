@@ -1,0 +1,9 @@
+import GachaTypeUnion from "@/common/types/GachaTypeUnion"
+interface HoyoBannerInfo<GachaType extends GachaTypeUnion> {
+    begin_time: string
+    end_time: string
+    gacha_id: string
+    gacha_name: string
+    gacha_type: GachaType
+}
+export default HoyoBannerInfo

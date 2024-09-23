@@ -10,12 +10,12 @@ import GachaTypeUnion from "@/common/types/GachaTypeUnion";
 import RankTypeUnion from "@/common/types/RankTypeUnion";
 import TargetRankTypesEnum from "@/common/types/TargetRankTypesEnum";
 import HoyoCachedUrlHandler from "@/common/HoyoCachedUrlHandler";
-import GachaLogApiRouteUrls from "@/common/api/routes/endpoints/GachaLog";
 import DexieDBHelperClass from "@/common/database/DexieDBHelperClass";
 import TargetDexieDBInstance from "@/common/types/TargetDexieDBInstance";
 import ElementLogger from "../../function/ElementLogger";
 import HoyoApiRouteProvider from "@/common/api/routes/HoyoApiRouteProvider";
-import HoyoApiFetcher from "@/common/api/Hoyoverse/HoyoApiFetcher";
+import HoyoApi from "@/common/api/Hoyoverse/HoyoApi";
+import HoyoWishHistoryFetcher from "@/common/HoyoWishHistoryFetcher";
 export interface MainPageArgs<GachaType extends GachaTypeUnion, RankType extends RankTypeUnion> {
     game: Games
     dbInstance: TargetDexieDBInstance<GachaType, RankType>
@@ -29,7 +29,8 @@ export default function mainPageFactory<GachaType extends GachaTypeUnion, RankTy
         const dbHelper = new DexieDBHelperClass(args.dbInstance, args.gachaTypes)
         const gameAccounts = useLiveQuery(() => dbHelper.syncGetAllGameAccounts())
         const loggerElementRef = useRef<HTMLDivElement | null>(null)
-        const apiRouteProvider = new HoyoApiRouteProvider(args.game)
+        const hoyoApiRouteProvider = new HoyoApiRouteProvider(args.game)
+        const hoyoApi = new HoyoApi(hoyoApiRouteProvider)
         const [input, setInput] = useState<string>("")
         const fetchAndSavePulls = async () => {
             // e.preventDefault()
@@ -38,7 +39,7 @@ export default function mainPageFactory<GachaType extends GachaTypeUnion, RankTy
             const url = input
             const cachedUrlHandler = new HoyoCachedUrlHandler(url as string)
             const params = cachedUrlHandler.parseCachedUrlParams()
-            const hoyoApi = new HoyoApiFetcher(
+            const hoyoWishHistory = new HoyoWishHistoryFetcher<any, GachaType, RankType>(
                 ElementLogger(loggerElementRef),
                 params.authkey,
                 "en",
@@ -46,16 +47,16 @@ export default function mainPageFactory<GachaType extends GachaTypeUnion, RankTy
                 args.gachaTypeField,
                 args.rankTypes,
                 args.gachaTypes,
-                apiRouteProvider,
+                hoyoApi,
             )
             try {
-                const uid = await hoyoApi.getUid()
+                const uid = await hoyoWishHistory.getUid()
                 if (!uid) {
                     console.log("Seems you didnt pull yet")
                     return
                 }
                 const endIds = await dbHelper.getEndIds(uid)
-                const [pulls, stats] = await hoyoApi.fetchPullsAndCalculateStats(endIds)
+                const [pulls, stats] = await hoyoWishHistory.fetchPullsAndCalculateStats(endIds)
                 await dbHelper.saveGameAccount({
                     uid: uid,
                     region: params.gameBiz,
