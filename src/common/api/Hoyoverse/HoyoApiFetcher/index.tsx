@@ -1,12 +1,12 @@
 import CachedUrlParams from "@/common/types/CachedUrlParams"
-import HoyoParams from "./Params"
+import HoyoParams from "../Params"
 import PullEntity from "@/common/database/entities/Pull"
 import StatEntity from "@/common/database/entities/Stat"
 import HoyoPull from "@/common/types/Hoyoverse/HoyoPull"
 import GenshinGachaType from "@/common/types/Genshin/GachaType"
 import ZenlessGachaType from "@/common/types/Zenless/GachaType"
 import StarrailGachaType from "@/common/types/Starrail/GachaType"
-import GachaLogApiRouteUrls from "@/common/enum/GachaLogRouteApiUrls"
+import GachaLogApiRouteUrls from "@/common/api/routes/endpoints/GachaLog"
 import HoyoApiError from "@/common/error/HoyoApiError"
 import GachaTypeUnion from "@/common/types/GachaTypeUnion"
 import RankTypeUnion from "@/common/types/RankTypeUnion"
@@ -15,13 +15,14 @@ import TargetGachaTypesEnum from "@/common/types/TargetGachaTypesEnum"
 import sleep from "@/common/functions/sleep"
 import ItemTypeUnion from "@/common/types/ItemTypeUnion"
 import HoyoResponse from "@/common/types/Hoyoverse/HoyoResponse"
+import { HoyoApiRouteProviderType } from "../../routes/HoyoApiRouteProvider"
 type Helpers = {
     foundEpicPity: boolean,
     foundLegendaryPity: boolean,
     lastEpicIdx: number,
     lastLegendaryIdx: number,
 }
-class HoyoApiClass<ItemType extends ItemTypeUnion, GachaType extends GachaTypeUnion, RankType extends RankTypeUnion> {
+class HoyoApiFetcher<ItemType extends ItemTypeUnion, GachaType extends GachaTypeUnion, RankType extends RankTypeUnion> {
     protected params: Partial<HoyoParams> = {
         authkey_ver: 1,
         sign_type: 2,
@@ -40,7 +41,7 @@ class HoyoApiClass<ItemType extends ItemTypeUnion, GachaType extends GachaTypeUn
         protected gachaTypeField: "real_gacha_type" | "gacha_type",
         protected rankTypes: TargetRankTypesEnum<RankType>,
         protected gachaTypes: TargetGachaTypesEnum<GachaType>,
-        protected url: GachaLogApiRouteUrls
+        protected apiRouteProvider: HoyoApiRouteProviderType
     ) {
         this.params = {
             ...this.params,
@@ -58,7 +59,7 @@ class HoyoApiClass<ItemType extends ItemTypeUnion, GachaType extends GachaTypeUn
         for (let key of Object.keys(this.gachaTypes)) {
             if (!+key) continue
             this.params[this.gachaTypeField] = Number(key) as GachaType
-            const url = this.getUrl()
+            const url = this.getGachaLogUrl()
             const res = await fetch(url)
             if (!res.ok) throw Error("Fetch error")
             const json: HoyoResponse<ItemType, GachaType, RankType> = await res.json()
@@ -83,12 +84,12 @@ class HoyoApiClass<ItemType extends ItemTypeUnion, GachaType extends GachaTypeUn
         })
         return stringified
     }
-    protected getUrl() {
-        return `${this.url}?${new URLSearchParams(this.getStringifiedParams())}`
+    protected getGachaLogUrl() {
+        return `${this.apiRouteProvider.GACHA_LOG_URL}?${new URLSearchParams(this.getStringifiedParams())}`
     }
     protected async checkAuthkey() {
         this.params.size = 1
-        const url = this.getUrl()
+        const url = this.getGachaLogUrl()
         const res = await fetch(url)
         if (!res.ok) throw Error("Fetch error")
         const jsonRes: HoyoResponse<ItemType, GachaType, RankType> = await res.json()
@@ -173,7 +174,7 @@ class HoyoApiClass<ItemType extends ItemTypeUnion, GachaType extends GachaTypeUn
         lastLegendaryIdx: -1,
     }): Promise<PullEntity<ItemType, GachaType, RankType>[] | void> {
         const currentGachaType = this.params[this.gachaTypeField] as GachaType
-        const url = this.getUrl()
+        const url = this.getGachaLogUrl()
         const res = await fetch(url)
         if (!res.ok) {
             this.loggerFunction(`fetch error ${res.status}: ${res.statusText}`)
@@ -200,4 +201,4 @@ class HoyoApiClass<ItemType extends ItemTypeUnion, GachaType extends GachaTypeUn
         await this.fetchBannerRecursive(helpers)
     }
 }
-export default HoyoApiClass
+export default HoyoApiFetcher

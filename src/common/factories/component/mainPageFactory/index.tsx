@@ -10,18 +10,18 @@ import GachaTypeUnion from "@/common/types/GachaTypeUnion";
 import RankTypeUnion from "@/common/types/RankTypeUnion";
 import TargetRankTypesEnum from "@/common/types/TargetRankTypesEnum";
 import HoyoCachedUrlHandler from "@/common/HoyoCachedUrlHandler";
-import GachaLogApiRouteUrls from "@/common/enum/GachaLogRouteApiUrls";
-import HoyoApiClass from "@/common/api/Hoyoverse";
+import GachaLogApiRouteUrls from "@/common/api/routes/endpoints/GachaLog";
 import DexieDBHelperClass from "@/common/database/DexieDBHelperClass";
 import TargetDexieDBInstance from "@/common/types/TargetDexieDBInstance";
 import ElementLogger from "../../function/ElementLogger";
+import HoyoApiRouteProvider from "@/common/api/routes/HoyoApiRouteProvider";
+import HoyoApiFetcher from "@/common/api/Hoyoverse/HoyoApiFetcher";
 export interface MainPageArgs<GachaType extends GachaTypeUnion, RankType extends RankTypeUnion> {
     game: Games
     dbInstance: TargetDexieDBInstance<GachaType, RankType>
     gachaTypes: TargetGachaTypeEnum<GachaType>,
     rankTypes: TargetRankTypesEnum<RankType>
-    gachaTypeField: "real_gacha_type" | "gacha_type",
-    apiUrl: GachaLogApiRouteUrls
+    gachaTypeField: "real_gacha_type" | "gacha_type"
 }
 export default function mainPageFactory<GachaType extends GachaTypeUnion, RankType extends RankTypeUnion>(args: MainPageArgs<GachaType, RankType>) {
     const urlInputName = "url"
@@ -29,6 +29,7 @@ export default function mainPageFactory<GachaType extends GachaTypeUnion, RankTy
         const dbHelper = new DexieDBHelperClass(args.dbInstance, args.gachaTypes)
         const gameAccounts = useLiveQuery(() => dbHelper.syncGetAllGameAccounts())
         const loggerElementRef = useRef<HTMLDivElement | null>(null)
+        const apiRouteProvider = new HoyoApiRouteProvider(args.game)
         const [input, setInput] = useState<string>("")
         const fetchAndSavePulls = async () => {
             // e.preventDefault()
@@ -37,7 +38,7 @@ export default function mainPageFactory<GachaType extends GachaTypeUnion, RankTy
             const url = input
             const cachedUrlHandler = new HoyoCachedUrlHandler(url as string)
             const params = cachedUrlHandler.parseCachedUrlParams()
-            const hoyoApi = new HoyoApiClass(
+            const hoyoApi = new HoyoApiFetcher(
                 ElementLogger(loggerElementRef),
                 params.authkey,
                 "en",
@@ -45,7 +46,7 @@ export default function mainPageFactory<GachaType extends GachaTypeUnion, RankTy
                 args.gachaTypeField,
                 args.rankTypes,
                 args.gachaTypes,
-                args.apiUrl,
+                apiRouteProvider,
             )
             try {
                 const uid = await hoyoApi.getUid()

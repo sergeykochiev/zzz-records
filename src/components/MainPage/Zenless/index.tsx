@@ -1,6 +1,6 @@
 "use client"
 import { ZenlessDB } from "@/common/database/Zenless/init";
-import GachaLogApiRouteUrls from "@/common/enum/GachaLogRouteApiUrls";
+import GachaLogApiRouteUrls from "@/common/api/routes/endpoints/GachaLog";
 import Games from "@/common/enum/Games";
 import mainPageFactory from "@/common/factories/component/mainPageFactory";
 import ZenlessGachaType from "@/common/types/Zenless/GachaType";
