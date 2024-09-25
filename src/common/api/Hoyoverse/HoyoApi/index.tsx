@@ -1,5 +1,5 @@
 import ItemTypeUnion from "@/common/types/ItemTypeUnion";
-import GenericHoyoResponse from "../model/genericResponse";
+import GenericHoyoResponse from "../model/GenericResponse";
 import HoyoWishHistoryParams from "../model/WishHistory/params";
 import GachaTypeUnion from "@/common/types/GachaTypeUnion";
 import RankTypeUnion from "@/common/types/RankTypeUnion";
