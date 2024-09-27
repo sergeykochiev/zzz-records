@@ -10,18 +10,16 @@ export default function MainNavBar({ gamePathSegmentIndex = 1 }: { gamePathSegme
     const id = useId()
     const paths = pathname.split("/")
     const gameNames: Record<Games, string> = {
-        1: "Genshin Impact",
-        2: "Honkai: Star Rail",
-        3: "Zenless Zone Zero"
+        "hk4e": "Genshin Impact",
+        "hkrpg": "Honkai: Star Rail",
+        "nap": "Zenless Zone Zero"
     }
     return <NavBarWrapper>
-        {Object.keys(Games).map(key => {
-            if (!+key) return
-            const gameName = Games[key as keyof typeof Games].toString().toLowerCase()
-            return <Tab key={gameName} game={+key as Games} onChange={() => {
-                router.push(`/${gameName}`)
-            }} checked={paths[gamePathSegmentIndex] == String(gameName)} name={id}>
-                {gameNames[Number(key) as Games]}
+        {Object.values(Games).map(key => {
+            return <Tab key={key} game={key as Games} onChange={() => {
+                router.push(`/${key}`)
+            }} checked={paths[gamePathSegmentIndex] == String(key)} name={id}>
+                {gameNames[key as Games]}
             </Tab>
         })}
     </NavBarWrapper>

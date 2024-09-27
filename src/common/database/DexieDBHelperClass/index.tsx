@@ -4,7 +4,7 @@ import GachaTypeUnion from "@/common/types/GachaTypeUnion";
 import RankTypeUnion from "@/common/types/RankTypeUnion";
 import GameAccountEntity from "../entities/GameAccount";
 import StatEntity from "../entities/Stat";
-import TargetGachaTypesEnum from "@/common/types/TargetGachaTypesEnum";
+import TargetGachaTypesEnum from "@/common/types/targetGeneric/TargetGachaTypesEnum";
 import ItemTypeUnion from "@/common/types/ItemTypeUnion";
 type GetPullsDto<GachaType extends GachaTypeUnion> = {
     uid: string,

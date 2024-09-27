@@ -1,8 +1,8 @@
-import GenshinGachaType from "@/common/types/Genshin/GachaType";
+import GenshinGachaType from "@/common/types/game/Genshin/GachaType";
 import NavBarWrapper from "../NavBarWrapper";
-import StarrailGachaType from "@/common/types/Starrail/GachaType";
-import ZenlessGachaType from "@/common/types/Zenless/GachaType";
-import TargetGachaTypeEnum from "@/common/types/TargetGachaTypesEnum";
+import StarrailGachaType from "@/common/types/game/Starrail/GachaType";
+import ZenlessGachaType from "@/common/types/game/Zenless/GachaType";
+import TargetGachaTypeEnum from "@/common/types/targetGeneric/TargetGachaTypesEnum";
 import Tab from "../Tab";
 import { usePathname, useRouter } from "next/navigation";
 import { useId } from "react";

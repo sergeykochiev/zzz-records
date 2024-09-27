@@ -1,12 +1,12 @@
-import GachaTypeUnion from "@/common/types/GachaTypeUnion"
-import ItemTypeUnion from "@/common/types/ItemTypeUnion"
-import RankTypeUnion from "@/common/types/RankTypeUnion"
+import GachaTypeUnion from "@/common/types/union/GachaTypeUnion"
+import ItemTypeUnion from "@/common/types/union/ItemTypeUnion"
+import RankTypeUnion from "@/common/types/union/RankTypeUnion"
 interface PullEntity<ItemType extends ItemTypeUnion, GachaType extends GachaTypeUnion, RankType extends RankTypeUnion> {
-    uid: string,
-    itemId: string
+    uid: number,
+    itemId: number
     time: string
     name: string
-    id: string
+    id: number
     pity: number
     gachaType: GachaType
     rankType: RankType

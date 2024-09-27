@@ -1,4 +1,4 @@
-import GachaTypeUnion from "@/common/types/GachaTypeUnion"
+import GachaTypeUnion from "@/common/types/union/GachaTypeUnion"
 interface HoyoWishHistoryParams<GachaType extends GachaTypeUnion> {
     authkey_ver: number,
     authkey: string,

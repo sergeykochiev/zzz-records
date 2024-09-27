@@ -1,27 +1,28 @@
-import CachedUrlParams from "@/common/types/CachedUrlParams"
 import PullEntity from "@/common/database/entities/Pull"
 import StatEntity from "@/common/database/entities/Stat"
 import HoyoPull from "@/common/api/Hoyoverse/model/WishHistory/response/HoyoPull"
-import GenshinGachaType from "@/common/types/Genshin/GachaType"
-import ZenlessGachaType from "@/common/types/Zenless/GachaType"
-import StarrailGachaType from "@/common/types/Starrail/GachaType"
-import GachaLogApiRouteUrls from "@/common/api/routes/endpoints/GachaLog"
+import GenshinGachaType from "@/common/types/game/Genshin/GachaType"
+import ZenlessGachaType from "@/common/types/game/Zenless/GachaType"
+import StarrailGachaType from "@/common/types/game/Starrail/GachaType"
 import HoyoApiError from "@/common/error/HoyoApiError"
-import GachaTypeUnion from "@/common/types/GachaTypeUnion"
-import RankTypeUnion from "@/common/types/RankTypeUnion"
-import TargetRankTypesEnum from "@/common/types/TargetRankTypesEnum"
-import TargetGachaTypesEnum from "@/common/types/TargetGachaTypesEnum"
+import GachaTypeUnion from "@/common/types/union/GachaTypeUnion"
+import RankTypeUnion from "@/common/types/union/RankTypeUnion"
+import TargetRankTypesEnum from "@/common/types/targetGeneric/TargetRankTypesEnum"
+import TargetGachaTypesEnum from "@/common/types/targetGeneric/TargetGachaTypesEnum"
 import sleep from "@/common/functions/sleep"
-import ItemTypeUnion from "@/common/types/ItemTypeUnion"
+import ItemTypeUnion from "@/common/types/union/ItemTypeUnion"
 import HoyoApi from "../api/Hoyoverse/HoyoApi"
 import HoyoWishHistoryParams from "../api/Hoyoverse/model/WishHistory/params"
+import StandartCharactersUnion from "../types/union/StandartCharactersUnion"
+import GachaTypeFieldUnion from "../types/union/GachaTypeFIeldUnion"
+import TargetStandartCharactersEnum from "../types/targetGeneric/TargetStandartCharactersEnum"
 type Helpers = {
     foundEpicPity: boolean,
     foundLegendaryPity: boolean,
     lastEpicIdx: number,
     lastLegendaryIdx: number,
 }
-class HoyoWishHistoryFetcher<ItemType extends ItemTypeUnion, GachaType extends GachaTypeUnion, RankType extends RankTypeUnion> {
+class HoyoWishHistoryFetcher<ItemType extends ItemTypeUnion, GachaType extends GachaTypeUnion, RankType extends RankTypeUnion, StandartCharacters extends StandartCharactersUnion> {
     protected params: Partial<HoyoWishHistoryParams<GachaType>> = {
         authkey_ver: 1,
         sign_type: 2,
@@ -29,6 +30,7 @@ class HoyoWishHistoryFetcher<ItemType extends ItemTypeUnion, GachaType extends G
         size: 20,
         end_id: ""
     }
+    protected standartCharacters: string[] = []
     protected defaultApiDelay = 300
     protected stats: Record<GachaType, StatEntity<GachaType>> = {} as Record<GachaType, StatEntity<GachaType>>
     protected pulls: Record<GachaType, PullEntity<ItemType, GachaType, RankType>[]> = {} as Record<GachaType, PullEntity<ItemType, GachaType, RankType>[]>
@@ -37,11 +39,13 @@ class HoyoWishHistoryFetcher<ItemType extends ItemTypeUnion, GachaType extends G
         authkey: string,
         lang: string,
         gameBiz: string,
-        protected gachaTypeField: "real_gacha_type" | "gacha_type",
+        protected gachaTypeField: GachaTypeFieldUnion,
         protected rankTypes: TargetRankTypesEnum<RankType>,
         protected gachaTypes: TargetGachaTypesEnum<GachaType>,
+        standartCharacters: TargetStandartCharactersEnum<StandartCharacters>,
         protected api: HoyoApi<ItemType, GachaType, RankType>
     ) {
+        this.standartCharacters = Object.values(standartCharacters)
         this.params = {
             ...this.params,
             authkey: authkey,
@@ -89,22 +93,25 @@ class HoyoWishHistoryFetcher<ItemType extends ItemTypeUnion, GachaType extends G
     protected handleIncomingPull(pull: HoyoPull<ItemType, GachaType, RankType>, helpers: Helpers) {
         const currentGachaType = this.params[this.gachaTypeField] as GachaType
         const newPull: PullEntity<ItemType, GachaType, RankType> = {
-            uid: pull.uid,
-            itemId: pull.item_id,
+            uid: +pull.uid,
+            itemId: +pull.item_id,
             gachaType: currentGachaType,
             time: pull.time,
             name: pull.name,
             itemType: pull.item_type as ItemType,
             rankType: +pull.rank_type as RankType,
-            id: pull.id,
+            id: +pull.id,
             pity: 0
         }
-        this.stats[currentGachaType].uid = pull.uid
+        !this.stats[currentGachaType].uid && (this.stats[currentGachaType].uid = pull.uid)
         this.stats[currentGachaType].count += 1
         if (newPull.rankType == this.rankTypes.EPIC) {
             this.stats[currentGachaType].countEpic += 1
-            if (!helpers.foundEpicPity) helpers.foundEpicPity = true
-            if (!helpers.foundLegendaryPity) this.stats[currentGachaType].currentLegendaryPity += 1
+            if (!helpers.foundEpicPity) {
+                helpers.foundEpicPity = true
+                this.stats[currentGachaType].currentEpicPity = this.pulls[currentGachaType].length
+                this.stats[currentGachaType].nextEpicIsUp = true
+            }
             if (helpers.lastEpicIdx >= 0) {
                 this.pulls[currentGachaType][helpers.lastEpicIdx].pity += 1
                 this.stats[currentGachaType].avgEpicPity += this.pulls[currentGachaType][helpers.lastEpicIdx].pity
@@ -113,8 +120,11 @@ class HoyoWishHistoryFetcher<ItemType extends ItemTypeUnion, GachaType extends G
             helpers.lastEpicIdx = this.pulls[currentGachaType].length
         } else if (newPull.rankType == this.rankTypes.LEGENDARY) {
             this.stats[currentGachaType].countLegendary += 1
-            if (!helpers.foundLegendaryPity) helpers.foundLegendaryPity = true
-            if (!helpers.foundEpicPity) this.stats[currentGachaType].currentEpicPity += 1
+            if (!helpers.foundLegendaryPity) {
+                helpers.foundLegendaryPity = true
+                this.stats[currentGachaType].currentLegendaryPity = this.pulls[currentGachaType].length
+                this.stats[currentGachaType].nextLegendaryIsUp = this.standartCharacters.includes(pull.name)
+            }
             if (helpers.lastEpicIdx >= 0) this.pulls[currentGachaType][helpers.lastEpicIdx].pity += 1
             if (helpers.lastLegendaryIdx >= 0) {
                 this.pulls[currentGachaType][helpers.lastLegendaryIdx].pity += 1
@@ -122,8 +132,6 @@ class HoyoWishHistoryFetcher<ItemType extends ItemTypeUnion, GachaType extends G
             }
             helpers.lastLegendaryIdx = this.pulls[currentGachaType].length
         } else {
-            if (!helpers.foundEpicPity) this.stats[currentGachaType].currentEpicPity += 1
-            if (!helpers.foundLegendaryPity) this.stats[currentGachaType].currentLegendaryPity += 1
             if (helpers.lastEpicIdx >= 0) this.pulls[currentGachaType][helpers.lastEpicIdx].pity += 1
             if (helpers.lastLegendaryIdx >= 0) this.pulls[currentGachaType][helpers.lastLegendaryIdx].pity += 1
         }
@@ -177,7 +185,7 @@ class HoyoWishHistoryFetcher<ItemType extends ItemTypeUnion, GachaType extends G
         for (const pull of res.data.list) {
             this.handleIncomingPull(pull, helpers)
         }
-        this.params.end_id = this.pulls[currentGachaType][this.pulls[currentGachaType].length - 1].id
+        this.params.end_id = this.pulls[currentGachaType][this.pulls[currentGachaType].length - 1].id.toString()
         this.loggerFunction(`Fetched ${this.pulls[currentGachaType].length} pulls from ${this.gachaTypes[currentGachaType as keyof (typeof GenshinGachaType | StarrailGachaType | ZenlessGachaType)]} banner`)
         await sleep(this.defaultApiDelay)
         await this.fetchBannerRecursive(helpers)

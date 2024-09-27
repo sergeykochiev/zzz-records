@@ -1,5 +1,5 @@
 "use client"
-import TargetGachaTypeEnum from "@/common/types/TargetGachaTypesEnum"
+import TargetGachaTypeEnum from "@/common/types/targetGeneric/TargetGachaTypesEnum"
 import { useLiveQuery } from "dexie-react-hooks"
 import { notFound, useParams } from "next/navigation"
 import { MainPageArgs } from "../mainPageFactory"

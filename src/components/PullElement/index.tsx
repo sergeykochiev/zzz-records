@@ -1,11 +1,10 @@
 import PullEntity from "@/common/database/entities/Pull"
-import GenshinRankType from "@/common/types/Genshin/RankType"
-import StarrailRankType from "@/common/types/dto/Starrail/RankType"
-import ZenlessRankType from "@/common/types/Zenless/RankType"
-import RankTypeUnion from "@/common/types/RankTypeUnion"
-import TargetRankTypesEnum from "@/common/types/TargetRankTypesEnum"
-interface PullElementProps<RankType extends RankTypeUnion> {
-    pull: PullEntity<any, RankType>
+import RankTypeUnion from "@/common/types/union/RankTypeUnion"
+import TargetRankTypesEnum from "@/common/types/targetGeneric/TargetRankTypesEnum"
+import ItemTypeUnion from "@/common/types/union/ItemTypeUnion"
+import GachaTypeUnion from "@/common/types/union/GachaTypeUnion"
+interface PullElementProps<RankType extends RankTypeUnion, ItemType extends ItemTypeUnion = any, GachaType extends GachaTypeUnion = any> {
+    pull: PullEntity<ItemType, GachaType, RankType>
     rankTypes: TargetRankTypesEnum<RankType>
 }
 export default function PullElement<RankType extends RankTypeUnion>(props: PullElementProps<RankType>) {

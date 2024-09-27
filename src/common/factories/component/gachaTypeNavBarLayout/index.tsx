@@ -1,5 +1,5 @@
 import GachaTypeUnion from "@/common/types/GachaTypeUnion"
-import TargetGachaTypesEnum from "@/common/types/TargetGachaTypesEnum"
+import TargetGachaTypesEnum from "@/common/types/targetGeneric/TargetGachaTypesEnum"
 import GachaTypeNavBar from "@/components/GachaTypeNavBar"
 interface GachaTypeNavBarLayoutArgs<GachaType extends GachaTypeUnion> {
     gachaTypes: TargetGachaTypesEnum<GachaType>

@@ -1,6 +1,6 @@
 enum Games {
-    GENSHIN = 1,
-    STARRAIL = 2,
-    ZENLESS = 3
+    GENSHIN = "hk4e",
+    STARRAIL = "hkrpg",
+    ZENLESS = "nap"
 }
 export default Games

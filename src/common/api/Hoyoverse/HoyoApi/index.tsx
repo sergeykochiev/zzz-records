@@ -1,11 +1,11 @@
-import ItemTypeUnion from "@/common/types/ItemTypeUnion";
-import GenericHoyoResponse from "../model/GenericResponse";
+import ItemTypeUnion from "@/common/types/union/ItemTypeUnion";
 import HoyoWishHistoryParams from "../model/WishHistory/params";
-import GachaTypeUnion from "@/common/types/GachaTypeUnion";
-import RankTypeUnion from "@/common/types/RankTypeUnion";
+import GachaTypeUnion from "@/common/types/union/GachaTypeUnion";
+import RankTypeUnion from "@/common/types/union/RankTypeUnion";
 import HoyoWishHistoryData from "../model/WishHistory/response/data";
 import HoyoBannerListData from "../model/BannerList/response/data";
 import HoyoApiRouteProvider from "../../routes/HoyoApiRouteProvider";
+import GenericHoyoResponse from "../model/genericResponse";
 class HoyoApi<ItemType extends ItemTypeUnion, GachaType extends GachaTypeUnion, RankType extends RankTypeUnion> {
     constructor(
         private apiRouteProvider: HoyoApiRouteProvider

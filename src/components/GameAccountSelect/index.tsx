@@ -15,7 +15,7 @@ export default function GameAccountSelect({ gameAccounts, gameAccountPathSegment
     const getNewRoute = (gameAccount: string) => `${paths.slice(0,gameAccountPathSegmentIndex).join("/")}/${gameAccount}/${paths.slice(gameAccountPathSegmentIndex+1).join("/")}`
     return <SelectField placeholder="Choose game account uid..." defaultValue={currentGameAccount}>
         {(gameAccounts && gameAccounts.length) ? gameAccounts.map(gameAccount => {
-            return <OptionElement key={gameAccount.id} name="game-account-selector" onChange={() => {
+            return <OptionElement key={gameAccount.uid} name="game-account-selector" onChange={() => {
                 router.push(getNewRoute(gameAccount.uid))
             }} checked={currentGameAccount == gameAccount.uid}>
                 {gameAccount.uid}

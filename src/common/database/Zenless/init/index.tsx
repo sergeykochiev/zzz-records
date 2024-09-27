@@ -1,9 +1,9 @@
 import Dexie, { EntityTable } from "dexie";
 import GameAccountEntity from "../../entities/GameAccount";
 import STORES from "../../stores";
-import ZenlessItemType from "@/common/types/Zenless/ItemType";
-import ZenlessGachaType from "@/common/types/Zenless/GachaType";
-import ZenlessRankType from "@/common/types/Zenless/RankType";
+import ZenlessItemType from "@/common/types/game/Zenless/ItemType";
+import ZenlessGachaType from "@/common/types/game/Zenless/GachaType";
+import ZenlessRankType from "@/common/types/game/Zenless/RankType";
 import PullEntity from "../../entities/Pull";
 import StatEntity from "../../entities/Stat";
 export const ZenlessDB = new Dexie("hwh-zenless-db") as Dexie & {
