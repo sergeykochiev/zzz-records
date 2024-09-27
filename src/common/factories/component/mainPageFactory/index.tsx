@@ -16,10 +16,8 @@ import ElementLogger from "../../function/ElementLogger";
 import HoyoApiRouteProvider from "@/common/api/routes/HoyoApiRouteProvider";
 import HoyoApi from "@/common/api/Hoyoverse/HoyoApi";
 import HoyoWishHistoryFetcher from "@/common/HoyoWishHistoryFetcher";
-import GenshinStandartCharacters from "@/common/types/game/Genshin/StandartCharacters";
 import TargetStandartCharactersEnum from "@/common/types/targetGeneric/TargetStandartCharactersEnum";
 import StandartCharactersUnion from "@/common/types/union/StandartCharactersUnion";
-import GenshinGachaTypeField from "@/common/types/game/Genshin/GachaTypeField";
 import GachaTypeFieldUnion from "@/common/types/union/GachaTypeFIeldUnion";
 export interface MainPageArgs<GachaType extends GachaTypeUnion, RankType extends RankTypeUnion, StandartCharacters extends StandartCharactersUnion> {
     game: Games
@@ -38,7 +36,6 @@ export default function mainPageFactory<GachaType extends GachaTypeUnion, RankTy
         const hoyoApiRouteProvider = new HoyoApiRouteProvider(args.game)
         const hoyoApi = new HoyoApi(hoyoApiRouteProvider)
         const [input, setInput] = useState<string>("")
-        console.log(GenshinStandartCharacters)
         const fetchAndSavePulls = async () => {
             // e.preventDefault()
             // const url = (new FormData(e.target as HTMLFormElement)).get(urlInputName)

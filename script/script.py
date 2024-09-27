@@ -13,8 +13,8 @@ genshinwebviewurl = 'https://gs.hoyoverse.com/genshin/event/e20190909gacha-v3/in
 zzzpath = "C:/Program Files/HoYoPlay/games/ZenlessZoneZero Game/ZenlessZoneZero_Data/webCaches/2.28.1.0/Cache/Cache_Data/data_2"
 genshinpath = "C:/Program Files/HoYoPlay/games/Genshin Impact game/GenshinImpact_Data/webCaches/2.28.0.0/Cache/Cache_Data/data_2"
 
-cachefile = PATH.WindowsPath(zzzpath)
-webviewurl = zzzwebviewurl
+cachefile = PATH.WindowsPath(genshinpath)
+webviewurl = genshinapiurl
 apiurl = zzzapiurl
 
 gachatypes = {

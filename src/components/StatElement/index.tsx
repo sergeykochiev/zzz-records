@@ -1,4 +1,3 @@
-import StatEntity from "@/common/database/entities/Stat"
 import GenshinRankType from "@/common/types/game/Genshin/RankType"
 import { StatsToDisplay } from "../StatisticsWrapperGrid"
 interface StatElementProps {
@@ -11,7 +10,7 @@ export default function StatElement(props: StatElementProps) {
     return <div className="px-[20px] py-[16px] bg-hwh-element-dark rounded-[8px] flex justify-between items-center text-hwh-body-text-dark font-normal text-[16px]">
         {props.label}
         <div className={`text-[20px] font-bold ${conditionalClassname}`}>
-            {Math.round(Number(props.value)) || "-"}
+            {props.value == undefined || props.value == null ? "-" : Math.round(+props.value)}
         </div>
     </div>
 }

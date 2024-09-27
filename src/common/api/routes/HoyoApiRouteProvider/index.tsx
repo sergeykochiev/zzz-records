@@ -1,5 +1,6 @@
 import Games from "../../../enum/Games";
 import BasePublicOperationUrl from "../base/PublicOperation";
+import baseWebstaticMihoyoUrl from "../base/WebstaticMihoyo";
 import ChinaBannerListEndpoint from "../endpoints/ChinaBannerList";
 import GachaLogEndpoint from "../endpoints/GachaLog";
 class HoyoApiRouteProvider {
@@ -8,8 +9,8 @@ class HoyoApiRouteProvider {
     constructor(
         game: Games
     ) {
-        this.GACHA_LOG_URL = BasePublicOperationUrl + "/" + GachaLogEndpoint[game]
-        this.CN_GACHA_LIST_URL = BasePublicOperationUrl + "/" + ChinaBannerListEndpoint[game]
+        this.GACHA_LOG_URL = BasePublicOperationUrl[game] + "/" + GachaLogEndpoint[game]
+        this.CN_GACHA_LIST_URL = baseWebstaticMihoyoUrl + "/" + ChinaBannerListEndpoint[game]
     }
 }
 export default HoyoApiRouteProvider

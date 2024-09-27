@@ -3,15 +3,15 @@ import StatElement from "../StatElement"
 import GachaTypeUnion from "@/common/types/union/GachaTypeUnion"
 export type StatsToDisplay = Omit<StatEntity<GachaTypeUnion>, "gachaType" | "uid">
 const UserReadableStatNames: Record<keyof StatsToDisplay, string> = {
-    avgEpicPity: "Average epic pity",
-    avgLegendaryPity: "Average legendary pity",
-    count: "Pull count",
-    countEpic: "Epic count",
-    countLegendary: "Legendary count",
-    currentEpicPity: "Current epic pity",
     currentLegendaryPity: "Current legendary pity",
+    nextLegendaryIsUp: "Next legendary is event",
+    avgLegendaryPity: "Average legendary pity",
+    countLegendary: "Legendary count",
+    count: "Pull count",
+    currentEpicPity: "Current epic pity",
     nextEpicIsUp: "Next epic is event",
-    nextLegendaryIsUp: "Next legendary is event"
+    avgEpicPity: "Average epic pity",
+    countEpic: "Epic count",
 }
 interface StatisticsWrapperGridProps {
     statistics: StatEntity<GachaTypeUnion>

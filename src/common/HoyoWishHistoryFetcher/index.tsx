@@ -93,14 +93,14 @@ class HoyoWishHistoryFetcher<ItemType extends ItemTypeUnion, GachaType extends G
     protected handleIncomingPull(pull: HoyoPull<ItemType, GachaType, RankType>, helpers: Helpers) {
         const currentGachaType = this.params[this.gachaTypeField] as GachaType
         const newPull: PullEntity<ItemType, GachaType, RankType> = {
-            uid: +pull.uid,
-            itemId: +pull.item_id,
+            uid: pull.uid,
+            itemId: pull.item_id,
             gachaType: currentGachaType,
             time: pull.time,
             name: pull.name,
             itemType: pull.item_type as ItemType,
             rankType: +pull.rank_type as RankType,
-            id: +pull.id,
+            id: pull.id,
             pity: 0
         }
         !this.stats[currentGachaType].uid && (this.stats[currentGachaType].uid = pull.uid)
@@ -161,6 +161,7 @@ class HoyoWishHistoryFetcher<ItemType extends ItemTypeUnion, GachaType extends G
             await this.fetchBannerRecursive()
             this.loggerFunction(`Finished fetching ${this.gachaTypes[+key as keyof (typeof GenshinGachaType | StarrailGachaType | ZenlessGachaType)]} banner`)
         }
+        this.loggerFunction("Finished fetching! Reload the page or choose the account in the menu")
         return [this.pulls, this.stats]
     }
     protected async fetchBannerRecursive(helpers: Helpers = {
@@ -178,14 +179,16 @@ class HoyoWishHistoryFetcher<ItemType extends ItemTypeUnion, GachaType extends G
             this.params.end_id = ""
             if (helpers.lastEpicIdx >= 0) this.stats[currentGachaType].avgEpicPity += this.pulls[currentGachaType][helpers.lastEpicIdx].pity
             if (helpers.lastLegendaryIdx >= 0) this.stats[currentGachaType].avgLegendaryPity += this.pulls[currentGachaType][helpers.lastLegendaryIdx].pity
-            this.stats[currentGachaType].avgEpicPity /= this.stats[currentGachaType].countEpic
-            this.stats[currentGachaType].avgLegendaryPity /= this.stats[currentGachaType].countLegendary
+            this.stats[currentGachaType].countEpic && (this.stats[currentGachaType].avgEpicPity /= this.stats[currentGachaType].countEpic)
+            this.stats[currentGachaType].countLegendary && (this.stats[currentGachaType].avgLegendaryPity /= this.stats[currentGachaType].countLegendary)
+            !helpers.foundLegendaryPity && (this.stats[currentGachaType].currentLegendaryPity = this.pulls[currentGachaType].length)
+            !helpers.foundEpicPity && (this.stats[currentGachaType].currentEpicPity = this.pulls[currentGachaType].length)
             return
         }
         for (const pull of res.data.list) {
             this.handleIncomingPull(pull, helpers)
         }
-        this.params.end_id = this.pulls[currentGachaType][this.pulls[currentGachaType].length - 1].id.toString()
+        this.params.end_id = this.pulls[currentGachaType][this.pulls[currentGachaType].length - 1].id
         this.loggerFunction(`Fetched ${this.pulls[currentGachaType].length} pulls from ${this.gachaTypes[currentGachaType as keyof (typeof GenshinGachaType | StarrailGachaType | ZenlessGachaType)]} banner`)
         await sleep(this.defaultApiDelay)
         await this.fetchBannerRecursive(helpers)
