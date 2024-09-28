@@ -20,7 +20,7 @@ cache_file_paths = {
     "GENSHIN": "C:/Program Files/HoYoPlay/games/Genshin Impact game/GenshinImpact_Data/webCaches/2.28.0.0/Cache/Cache_Data/data_2",
     "STARRAIL": "C:/Program Files/HoYoPlay/games/Star Rail Games/StarRail_Data/webCaches/2.28.0.0/Cache/Cache_Data/data_2"
 }
-game = "STARRAIL"
+game = "ZENLESS"
 cachefile = PATH.WindowsPath(cache_file_paths[game])
 apiurl = api_urls[game]
 webviewurl = apiurl
@@ -92,7 +92,7 @@ def test_fetch(link):
     game_biz, authkey = linkparams['game_biz'][0], linkparams['authkey'][0]
     params["authkey"] = authkey
     params["size"] = 1
-    params["gacha_type"] = 1
+    params["real_gacha_type"] = 2
     params["game_biz"] = game_biz
     emptyparams = []
     for key in params:
