@@ -5,17 +5,25 @@ import json
 from urllib.request import urlopen
 from urllib.parse import urlparse, urlencode, parse_qs
 import pyperclip
-
-zzzapiurl = 'https://public-operation-nap-sg.hoyoverse.com/common/gacha_record/api/getGachaLog'
-genshinapiurl = "https://public-operation-hk4e-sg.hoyoverse.com/gacha_info/api/getGachaLog"
-zzzwebviewurl = 'https://gs.hoyoverse.com/nap/event/e20230424gacha/index.html'
-genshinwebviewurl = 'https://gs.hoyoverse.com/genshin/event/e20190909gacha-v3/index.html'
-zzzpath = "C:/Program Files/HoYoPlay/games/ZenlessZoneZero Game/ZenlessZoneZero_Data/webCaches/2.28.1.0/Cache/Cache_Data/data_2"
-genshinpath = "C:/Program Files/HoYoPlay/games/Genshin Impact game/GenshinImpact_Data/webCaches/2.28.0.0/Cache/Cache_Data/data_2"
-
-cachefile = PATH.WindowsPath(genshinpath)
-webviewurl = genshinapiurl
-apiurl = zzzapiurl
+api_urls = {
+    "ZENLESS": 'https://public-operation-nap-sg.hoyoverse.com/common/gacha_record/api/getGachaLog',
+    "GENSHIN": "https://public-operation-hk4e-sg.hoyoverse.com/gacha_info/api/getGachaLog",
+    "STARRAIL": "https://public-operation-hkrpg-sg.hoyoverse.com/common/gacha_record/api/getGachaLog"
+}
+web_api_urls = {
+    "ZENLESS": 'https://gs.hoyoverse.com/nap/event/e20230424gacha/index.html',
+    "GENSHIN": 'https://gs.hoyoverse.com/genshin/event/e20190909gacha-v3/index.html',
+    "STARRAIL": ""
+}
+cache_file_paths = {
+    "ZENLESS": "C:/Program Files/HoYoPlay/games/ZenlessZoneZero Game/ZenlessZoneZero_Data/webCaches/2.28.1.0/Cache/Cache_Data/data_2",
+    "GENSHIN": "C:/Program Files/HoYoPlay/games/Genshin Impact game/GenshinImpact_Data/webCaches/2.28.0.0/Cache/Cache_Data/data_2",
+    "STARRAIL": "C:/Program Files/HoYoPlay/games/Star Rail Games/StarRail_Data/webCaches/2.28.0.0/Cache/Cache_Data/data_2"
+}
+game = "STARRAIL"
+cachefile = PATH.WindowsPath(cache_file_paths[game])
+apiurl = api_urls[game]
+webviewurl = apiurl
 
 gachatypes = {
     "standart": None,
@@ -84,7 +92,7 @@ def test_fetch(link):
     game_biz, authkey = linkparams['game_biz'][0], linkparams['authkey'][0]
     params["authkey"] = authkey
     params["size"] = 1
-    params["real_gacha_type"] = 1
+    params["gacha_type"] = 1
     params["game_biz"] = game_biz
     emptyparams = []
     for key in params:

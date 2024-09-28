@@ -1,4 +1,4 @@
-import GachaTypeUnion from "@/common/types/GachaTypeUnion"
+import GachaTypeUnion from "@/common/types/union/GachaTypeUnion"
 interface StatEntity<GachaType extends GachaTypeUnion> {
     uid: string
     gachaType: GachaType
